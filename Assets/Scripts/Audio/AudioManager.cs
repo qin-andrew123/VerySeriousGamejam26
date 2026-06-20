@@ -17,6 +17,7 @@ public class AudioManager : MonoBehaviour
         m_audioSource.loop = looping;
         m_audioSource.Play();
     }
+
     public void PlayAudioOneShot(AudioClip audioClip, float scale = 1.0f)
     {
         m_audioSource.volume = PlayerPrefs.GetFloat("Volume");

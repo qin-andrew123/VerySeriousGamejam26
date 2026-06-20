@@ -9,6 +9,7 @@ public enum InputState
     INPUT_STATE_GAMEPLAY = 0,
     INPUT_STATE_DIALOGUE = 1,
 }
+
 public class PlayerInput : MonoBehaviour
 {
     private InputActionMap m_gameplayMap;

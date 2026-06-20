@@ -25,6 +25,7 @@ public class FadeElement
 
         m_activeCoroutine = m_runner.StartCoroutine(FadeInOut());
     }
+
     private IEnumerator FadeInOut()
     {
         m_roundRoot.AddToClassList("notify--visible");

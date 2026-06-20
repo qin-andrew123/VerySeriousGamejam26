@@ -13,6 +13,7 @@ public class GameplayUIControl : MonoBehaviour
     private FadeElement m_turnFade;
     [SerializeField] private float m_roundFadeTime = 1.0f;
     [SerializeField] private float m_turnFadeTime = 1.0f;
+
     private void InitializeRoundInfo()
     {
         m_roundRoot = m_rootUI.Q<VisualElement>("TurnRoot");
@@ -21,11 +22,13 @@ public class GameplayUIControl : MonoBehaviour
         m_roundFade = new FadeElement(this, m_roundInfo, m_roundFadeTime);
         m_turnFade = new FadeElement(this, m_turnInfo, m_turnFadeTime);
     }
+
     private void UpdateRoundInformation(int roundNumber)
     {
         m_roundInfo.text = $"Round {roundNumber}";
         m_roundFade.Show();
     }
+
     private void UpdateTurnInformation(TurnOrder turn)
     {
         switch(turn)
@@ -52,6 +55,7 @@ public class GameplayUIControl : MonoBehaviour
 
         m_turnFade.Show();
     }
+
     private void OnEnable()
     {
         m_rootUI = GetComponent<UIDocument>().rootVisualElement;

@@ -19,6 +19,7 @@ public class AIManager : MonoBehaviour
 
         return m_AIBehaviors[properIndex].GetAction();
     }
+
     public void PerformAction(int AIType, ActionType actionType)
     {
         // TODO AQIN: Implement

@@ -79,6 +79,7 @@ public class TurnManager : MonoBehaviour
         m_actionChosen = true;
         // TODO AQIN: Set action here
     }
+
     private IEnumerator WaitOnActionChosen(TurnOrder turn)
     {
         m_actionChosen = false;
@@ -110,6 +111,7 @@ public class TurnManager : MonoBehaviour
 
         // TODO AQIN: UpdateBoard Manager with the action
     }
+
     private IEnumerator UpdateTurnInternal(TurnOrder turn)
     {
         Assert.IsTrue(m_turnState == TurnState.TURN_STATE_START);
@@ -129,6 +131,7 @@ public class TurnManager : MonoBehaviour
 
         AdvanceTurnState();
     }
+
     private IEnumerator UpdateRoundInternal()
     {
         Assert.IsTrue(m_roundState == RoundState.ROUND_STATE_START);
@@ -158,6 +161,7 @@ public class TurnManager : MonoBehaviour
             yield return StartCoroutine(UpdateRoundInternal());
         }
     }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
