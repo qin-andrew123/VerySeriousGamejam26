@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
+using System;
 
 public enum InputState
 {
@@ -8,6 +9,7 @@ public enum InputState
     INPUT_STATE_GAMEPLAY = 0,
     INPUT_STATE_DIALOGUE = 1,
 }
+
 public class PlayerInput : MonoBehaviour
 {
     private InputActionMap m_gameplayMap;
@@ -17,6 +19,8 @@ public class PlayerInput : MonoBehaviour
     private float m_interactCooldown = 0.5f;
     private float m_interactTimer = 0.0f;
     private bool m_canInteract = false;
+
+    public static event Action OnPlayerSelectedAction;
     private void ChangeInputState(InputState state)
     {
         switch (state)

@@ -1,0 +1,9 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Art/UI/GameplayUI.uss?fileID=7433441132597879392&amp;guid=8f1a786096a6a6c4b8d652da8edc9eb1&amp;type=3#GameplayUI"/>
+    <ui:VisualElement name="GameplayRoot" style="flex-grow: 1;">
+        <ui:VisualElement name="TurnRoot" style="flex-grow: 1; align-self: stretch; justify-content: space-between; align-items: flex-start; flex-direction: row; max-height: 100px; min-height: 50px; min-width: 100%; max-width: 100%;">
+            <ui:Label text="Current Round: 1" name="RoundNum" class="notify" style="font-size: 50px;"/>
+            <ui:Label text="Current Turn: 1" name="CurrentTurn" class="notify" style="font-size: 50px;"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

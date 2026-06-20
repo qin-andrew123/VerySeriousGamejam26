@@ -1,0 +1,13 @@
+:root {
+}
+
+.notify {
+    transition-property: opacity;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-in-out;
+    opacity: 0;
+}
+
+.notify--visible {
+    opacity: 1;
+}
