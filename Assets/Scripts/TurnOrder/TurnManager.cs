@@ -5,7 +5,7 @@ using System;
 public enum RoundState
 {
     ROUND_STATE_INVALID = -1,
-    ROUND_STATE_START = 0,
+    ROUND_STATE_START,
     ROUND_STATE_TAKING_TURNS,
     ROUND_STATE_END,
     ROUND_STATE_SIZE
@@ -14,8 +14,8 @@ public enum RoundState
 public enum TurnState
 {
     TURN_STATE_INVALID = -1,
-    TURN_STATE_START = 0, // NOTIFY START OF TURN
-    TURN_STATE_CHOOSING = 1,
+    TURN_STATE_START,
+    TURN_STATE_CHOOSING,
     TURN_STATE_PLAY_ACTION,
     TURN_STATE_END_TURN,
     TURN_STATE_SIZE
@@ -24,7 +24,7 @@ public enum TurnState
 public enum TurnOrder
 {
     TURN_ORDER_INVALID = -1,
-    TURN_ORDER_PLAYER = 0,
+    TURN_ORDER_PLAYER,
     TURN_ORDER_NPC1,
     TURN_ORDER_NPC2,
     TURN_ORDER_NPC3,
@@ -44,6 +44,7 @@ public class TurnManager : MonoBehaviour
     public bool IsGameOver { get; set; } = false;
     public float RoundDelayTime { get { return m_roundDelayTime; } }
     public float TurnDelayTime { get { return m_turnDelayTime; } }
+
     private RoundState m_roundState = RoundState.ROUND_STATE_INVALID;
     private TurnState m_turnState = TurnState.TURN_STATE_INVALID;
     private int m_numRounds = 0;
@@ -86,8 +87,7 @@ public class TurnManager : MonoBehaviour
         m_currTurnAction = ActionType.ACTION_TYPE_INVALID;
         if (turn == TurnOrder.TURN_ORDER_PLAYER)
         {
-            //yield return new WaitUntil(() => m_actionChosen);
-            yield return new WaitForSecondsRealtime(m_turnDelayTime);
+            yield return new WaitUntil(() => m_actionChosen);
         }
         else if (turn > TurnOrder.TURN_ORDER_PLAYER && turn < TurnOrder.TURN_ORDER_SIZE)
         {
