@@ -205,7 +205,7 @@ Transform:
   m_GameObject: {fileID: 292215413}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.07, y: 1.63, z: 0}
+  m_LocalPosition: {x: -1.42, y: 2.72, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -311,7 +311,7 @@ Transform:
   m_GameObject: {fileID: 416398492}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.92, y: -1.59, z: 0}
+  m_LocalPosition: {x: 1.06, y: -2.9, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -437,9 +437,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: deec83e92daa1f544baadb811e87bc4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TurnManager
-  m_roundDelayTime: 3
-  m_turnDelayTime: 3
-  m_aiManager: {fileID: 1611629857}
+  _aiManager: {fileID: 1611629857}
 --- !u!1 &729409187
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,7 +524,7 @@ Transform:
   m_GameObject: {fileID: 729409187}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.01, y: -3.41, z: 0}
+  m_LocalPosition: {x: -1.61, y: -2.64, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -631,7 +629,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 970129587}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.30070576, w: 0.953717}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -642,7 +640,7 @@ Transform:
   - {fileID: 1245730103}
   - {fileID: 2103388975}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 35}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &970129590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -656,6 +654,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardManager
   m_angleOfRotation: 60
+  m_rotationDuration: 1
   m_delayTime: 1
   m_foodSpawnPoint:
   - {fileID: 1877732947}
@@ -751,7 +750,7 @@ Transform:
   m_GameObject: {fileID: 1066903605}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.9, y: -1.97, z: 0}
+  m_LocalPosition: {x: -3.12, y: 0.06, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -950,6 +949,7 @@ GameObject:
   - component: {fileID: 1576773971}
   - component: {fileID: 1576773970}
   - component: {fileID: 1576773972}
+  - component: {fileID: 1576773973}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1025,7 +1025,7 @@ Transform:
   m_GameObject: {fileID: 1576773969}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.15, y: 3.19, z: 0}
+  m_LocalPosition: {x: 1.81, y: 2.65, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1043,6 +1043,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e9c980cb89c4174ab36cf9580604e28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInput
+--- !u!114 &1576773973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1576773969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9afcf1e4791d08e41b1310b6c460ad1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerActionManager
+  _gameplayUIControl: {fileID: 1626048717}
+  _actionWeights:
+  - 1
+  - 1
+  - 1
+  - 1
 --- !u!1 &1596941441
 GameObject:
   m_ObjectHideFlags: 0
@@ -1129,7 +1147,7 @@ Transform:
   m_GameObject: {fileID: 1596941441}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.79, y: 1.4, z: 0}
+  m_LocalPosition: {x: 3.22, y: -0.2, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1229,8 +1247,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24ff21f686c3e344587249d733eed386, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameplayUIControl
-  m_roundFadeTime: 2
-  m_turnFadeTime: 2
+  _roundFadeTime: 1
+  _turnFadeTime: 1
+  _interactableSprite: {fileID: 2800000, guid: e915f797153094c4e9b6786394cefed9, type: 3}
+  _uninteractableSprite: {fileID: 2800000, guid: c5c75d74cbce56945a3826c201f5427d, type: 3}
+  _offsetForMouseTexture: {x: 100, y: 100}
 --- !u!114 &1626048718
 MonoBehaviour:
   m_ObjectHideFlags: 0

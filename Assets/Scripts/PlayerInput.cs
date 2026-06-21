@@ -14,7 +14,6 @@ public enum InputState
 public class PlayerInput : MonoBehaviour
 {
     public static PlayerInput Instance { get; private set; }
-    public static event Action OnPlayerSelectedAction;
     public InputState CurrentInputState { get { return m_currentInputState; } }
     public bool CanInteract { get { return m_canInteract; } set { m_canInteract = value; } }
     private InputActionMap m_gameplayMap;
@@ -23,9 +22,8 @@ public class PlayerInput : MonoBehaviour
 
     private InputState m_currentInputState = InputState.INPUT_STATE_GAMEPLAY;
 
-    private float m_interactCooldown = 0.5f;
-    private float m_interactTimer = 0.0f;
     private bool m_canInteract = false;
+
     private void ChangeInputState(InputState state)
     {
         switch (state)
@@ -80,19 +78,10 @@ public class PlayerInput : MonoBehaviour
             return;
         }
 
-        if (!m_canInteract)
+        if (TurnManager.Instance.IsPlayersTurn())
         {
-            if (m_interactTimer <= 0.0f)
-            {
-                m_interactTimer = m_interactCooldown;
-                m_canInteract = true;
-            }
-            else
-            {
-                m_interactTimer -= Time.deltaTime;
-            }
+            m_canInteract = true;
         }
-        
     }
 
     private void PollDialogueInput()
@@ -124,14 +113,6 @@ public class PlayerInput : MonoBehaviour
     }
     private void PollInput()
     {
-        if (m_interactTimer <= 0)
-        {
-            m_canInteract = true;
-        }
-        else
-        {
-            m_interactTimer -= Time.deltaTime;
-        }
         PollGameplayInput();
         PollDialogueInput();
         PollMenuInput();

@@ -1,28 +1,116 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+public class GameplayButton
+{
+    public Button ActionButton;
+    public bool IsAvailable;
+    public int ActionIndex;
+
+    public GameplayButton(Button button, bool available, int index)
+    {
+        ActionButton = button;
+        IsAvailable = available;
+        ActionIndex = index;
+    }
+}
+
 public class GameplayUIControl : MonoBehaviour
 {
+    [SerializeField] private float _roundFadeTime = 1.0f;
+    [SerializeField] private float _turnFadeTime = 1.0f;
+    [SerializeField] private Texture2D _interactableSprite;
+    [SerializeField] private Texture2D _uninteractableSprite;
+    [SerializeField] private Vector2 _offsetForMouseTexture = new Vector2(3, 3);
+
     private VisualElement m_rootUI;
 
     // Round Layout
-    private VisualElement m_roundRoot;
-    private TextElement m_roundInfo;
-    private TextElement m_turnInfo;
-    private FadeElement m_roundFade;
-    private FadeElement m_turnFade;
-    private Button m_actionOne;
-    private Button m_actionTwo;
-    private Button m_actionThree;
-    private Button m_actionFour;
+    private VisualElement _roundRoot;
+    private TextElement _roundInfo;
+    private TextElement _turnInfo;
+    private FadeElement _roundFade;
+    private FadeElement _turnFade;
 
-    [SerializeField] private float m_roundFadeTime = 1.0f;
-    [SerializeField] private float m_turnFadeTime = 1.0f;
+    private VisualElement _remoteRoot;
+    private List<GameplayButton> _gameplayButtons = new List<GameplayButton>();
+    private Dictionary<string, int> _validButtonsToIndex = new Dictionary<string, int>();
+
+    public void MarkButtonAsAvailable(int index)
+    {
+        GameplayButton gameplayButton = _gameplayButtons[index];
+        gameplayButton.IsAvailable = true;
+
+        Button button = gameplayButton.ActionButton;
+        button.RemoveFromClassList("remotebutton");
+        button.AddToClassList("remotebuttonActive");
+    }
+
+    public void MarkButtonAsUnavailable(int index)
+    {
+        GameplayButton gameplayButton = _gameplayButtons[index];
+        gameplayButton.IsAvailable = false;
+
+        Button button = gameplayButton.ActionButton;
+        button.RemoveFromClassList("remotebuttonActive");
+        button.AddToClassList("remotebutton");
+    }
+
+    private void HandleMouseEnter(MouseEnterEvent evt)
+    {
+        VisualElement target = evt.target as VisualElement;
+        if (_validButtonsToIndex.TryGetValue(target.name, out int value))
+        {
+            if (!_gameplayButtons[value].IsAvailable)
+            {
+                UnityEngine.Cursor.SetCursor(_uninteractableSprite, _offsetForMouseTexture, CursorMode.Auto);
+            }
+            else
+            {
+                UnityEngine.Cursor.SetCursor(_interactableSprite, _offsetForMouseTexture, CursorMode.Auto);
+            }
+        }
+    }
+
+    private void HandleMouseLeave(MouseLeaveEvent evt)
+    {
+        VisualElement target = evt.target as VisualElement;
+        if (_validButtonsToIndex.TryGetValue(target.name, out int value))
+        {
+            UnityEngine.Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        }
+    }
+
+    private void HandleMouseUp(MouseUpEvent evt)
+    {
+        bool mouseLeftPressed = 0 == evt.button;
+        if (!mouseLeftPressed)
+        {
+            return;
+        }
+
+        if (!IsClickValid())
+        {
+            return;
+        }
+
+        VisualElement target = evt.target as VisualElement;
+        if (_validButtonsToIndex.TryGetValue(target.name, out int value))
+        {
+            if (_gameplayButtons[value].IsAvailable)
+            {
+                PlayerActionManager.Instance.SelectAction(value);
+            }
+        }
+    }
 
     private bool IsClickValid()
     {
         if (!TurnManager.Instance.IsPlayersTurn())
         {
+            Debug.Log("Clicked on a button during " + TurnManager.Instance.CurrentTurn.ToString());
             return false;
         }
 
@@ -38,107 +126,87 @@ public class GameplayUIControl : MonoBehaviour
 
         return true;
     }
-    private void OnActionOneClicked()
+
+    private void InitializeButtonInfo(string buttonName)
     {
-        if (!IsClickValid())
-        {
-            return;
-        }
+        Button action = m_rootUI.Q<Button>(buttonName);
+        Assert.IsNotNull(action);
+        action.RegisterCallback<MouseUpEvent>(HandleMouseUp);
 
-        // TODO: Board manager perform action one
-
-    }
-
-    private void OnActionTwoClicked()
-    {
-        if (!IsClickValid())
-        {
-            return;
-        }
-
-        // TODO: Board manager perform action two
-
-    }
-
-    private void OnActionThreeClicked()
-    {
-        if (!IsClickValid())
-        {
-            return;
-        }
-
-        // TODO: Board manager perform action three
-
-    }
-
-    private void OnActionFourClicked()
-    {
-        if (!IsClickValid())
-        {
-            return;
-        }
-
-        // TODO: Board manager perform action four
-
+        int currentIndex = _gameplayButtons.Count;
+        _gameplayButtons.Add(new GameplayButton(action, false, currentIndex));
+        _validButtonsToIndex.Add(buttonName, currentIndex);
     }
 
     private void InitializeRoundInfo()
     {
-        m_roundRoot = m_rootUI.Q<VisualElement>("TurnRoot");
-        m_roundInfo = m_rootUI.Q<TextElement>("RoundNum");
-        m_turnInfo = m_rootUI.Q<TextElement>("CurrentTurn");
-        m_roundFade = new FadeElement(this, m_roundInfo, m_roundFadeTime);
-        m_turnFade = new FadeElement(this, m_turnInfo, m_turnFadeTime);
+        _roundRoot = m_rootUI.Q<VisualElement>("TurnRoot");
+        _roundInfo = m_rootUI.Q<TextElement>("RoundNum");
+        _turnInfo = m_rootUI.Q<TextElement>("CurrentTurn");
+        _roundFade = new FadeElement(this, _roundInfo, _roundFadeTime);
+        _turnFade = new FadeElement(this, _turnInfo, _turnFadeTime);
 
-        m_actionOne = m_rootUI.Q<Button>("ActionOne");
-        m_actionTwo = m_rootUI.Q<Button>("ActionTwo");
-        m_actionThree = m_rootUI.Q<Button>("ActionThree");
-        m_actionFour = m_rootUI.Q<Button>("ActionFour");
+        _roundFade.OnBannerComplete += OnRoundBannerComplete;
+        _turnFade.OnBannerComplete += OnTurnBannerComplete;
 
-        m_actionOne.clicked += OnActionOneClicked;
-        m_actionTwo.clicked += OnActionTwoClicked;
-        m_actionThree.clicked += OnActionThreeClicked;
-        m_actionFour.clicked += OnActionFourClicked;
+        _remoteRoot = m_rootUI.Q<VisualElement>("RemoteRoot");
+        _remoteRoot.RegisterCallback<MouseEnterEvent>(HandleMouseEnter, TrickleDown.TrickleDown);
+        _remoteRoot.RegisterCallback<MouseLeaveEvent>(HandleMouseLeave, TrickleDown.TrickleDown);
+
+        InitializeButtonInfo("ActionOne");
+        InitializeButtonInfo("ActionTwo");
+        InitializeButtonInfo("ActionThree");
+        InitializeButtonInfo("ActionFour");
+    }
+
+    private void OnRoundBannerComplete()
+    {
+        TurnManager.Instance.RoundUIAnimationComplete = true;
+    }
+
+    private void OnTurnBannerComplete()
+    {
+        TurnManager.Instance.TurnUIAnimationComplete = true;
     }
 
     private void UpdateRoundInformation(int roundNumber)
     {
-        m_roundInfo.text = $"Round {roundNumber}";
-        m_roundFade.Show();
+        _roundInfo.text = $"Round {roundNumber}";
+        _roundFade.Show();
     }
 
     private void UpdateTurnInformation(TurnOrder turn, bool isTurnSkipped)
     {
         if (isTurnSkipped)
         {
-            m_turnInfo.text = "Turn Skipped!";
+            _turnInfo.text = "Turn Skipped!";
         }
         else
         {
             switch (turn)
             {
                 case TurnOrder.TURN_ORDER_PLAYER:
-                    m_turnInfo.text = "Player's Turn";
+                    _turnInfo.text = "Player's Turn";
                     break;
                 case TurnOrder.TURN_ORDER_NPC1:
-                    m_turnInfo.text = "NPC1's Turn";
+                    _turnInfo.text = "NPC1's Turn";
                     break;
                 case TurnOrder.TURN_ORDER_NPC2:
-                    m_turnInfo.text = "NPC2's Turn";
+                    _turnInfo.text = "NPC2's Turn";
                     break;
                 case TurnOrder.TURN_ORDER_NPC3:
-                    m_turnInfo.text = "NPC3's Turn";
+                    _turnInfo.text = "NPC3's Turn";
                     break;
                 case TurnOrder.TURN_ORDER_NPC4:
-                    m_turnInfo.text = "NPC4's Turn";
+                    _turnInfo.text = "NPC4's Turn";
                     break;
                 case TurnOrder.TURN_ORDER_NPC5:
-                    m_turnInfo.text = "NPC5's Turn";
+                    _turnInfo.text = "NPC5's Turn";
                     break;
             }
         }
 
-        m_turnFade.Show();
+        _turnFade.Show();
     }
 
     private void OnEnable()
@@ -154,5 +222,17 @@ public class GameplayUIControl : MonoBehaviour
     {
         TurnManager.OnRoundStartNotify -= UpdateRoundInformation;
         TurnManager.OnTurnStartNotify -= UpdateTurnInformation;
+
+        _roundFade.OnBannerComplete -= OnRoundBannerComplete;
+        _turnFade.OnBannerComplete -= OnTurnBannerComplete;
+
+        _remoteRoot.UnregisterCallback<MouseEnterEvent>(HandleMouseEnter, TrickleDown.TrickleDown);
+        _remoteRoot.UnregisterCallback<MouseLeaveEvent>(HandleMouseLeave, TrickleDown.TrickleDown);
+
+
+        foreach (var button in _gameplayButtons)
+        {
+            button.ActionButton.UnregisterCallback<MouseUpEvent>(HandleMouseUp);
+        }
     }
 }
