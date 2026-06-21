@@ -223,13 +223,18 @@ public class TurnManager : MonoBehaviour
         m_turnSkips = Enumerable.Repeat(false, skipSize).ToList();
     }
 
+    private void BeginRounds()
+    {
+        BoardManager.Instance.InitializeBoard();
+        StartCoroutine(UpdateGameInternal());
+    }
+
     private void Start()
     {
         m_roundState = RoundState.ROUND_STATE_START;
         m_turnState = TurnState.TURN_STATE_START;
         PlayerInput.OnPlayerSelectedAction += OnPlayerSelectedAction;
-
-        StartCoroutine(UpdateGameInternal());
+        BeginRounds();
     }
 
     private void OnDestroy()
