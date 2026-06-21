@@ -11,8 +11,76 @@ public class GameplayUIControl : MonoBehaviour
     private TextElement m_turnInfo;
     private FadeElement m_roundFade;
     private FadeElement m_turnFade;
+    private Button m_actionOne;
+    private Button m_actionTwo;
+    private Button m_actionThree;
+    private Button m_actionFour;
+
     [SerializeField] private float m_roundFadeTime = 1.0f;
     [SerializeField] private float m_turnFadeTime = 1.0f;
+
+    private bool IsClickValid()
+    {
+        if (!TurnManager.Instance.IsPlayersTurn())
+        {
+            return false;
+        }
+
+        if (PlayerInput.Instance.CurrentInputState != InputState.INPUT_STATE_GAMEPLAY)
+        {
+            return false;
+        }
+
+        if (!PlayerInput.Instance.CanInteract)
+        {
+            return false;
+        }
+
+        return true;
+    }
+    private void OnActionOneClicked()
+    {
+        if (!IsClickValid())
+        {
+            return;
+        }
+
+        // TODO: Board manager perform action one
+
+    }
+
+    private void OnActionTwoClicked()
+    {
+        if (!IsClickValid())
+        {
+            return;
+        }
+
+        // TODO: Board manager perform action two
+
+    }
+
+    private void OnActionThreeClicked()
+    {
+        if (!IsClickValid())
+        {
+            return;
+        }
+
+        // TODO: Board manager perform action three
+
+    }
+
+    private void OnActionFourClicked()
+    {
+        if (!IsClickValid())
+        {
+            return;
+        }
+
+        // TODO: Board manager perform action four
+
+    }
 
     private void InitializeRoundInfo()
     {
@@ -21,6 +89,16 @@ public class GameplayUIControl : MonoBehaviour
         m_turnInfo = m_rootUI.Q<TextElement>("CurrentTurn");
         m_roundFade = new FadeElement(this, m_roundInfo, m_roundFadeTime);
         m_turnFade = new FadeElement(this, m_turnInfo, m_turnFadeTime);
+
+        m_actionOne = m_rootUI.Q<Button>("ActionOne");
+        m_actionTwo = m_rootUI.Q<Button>("ActionTwo");
+        m_actionThree = m_rootUI.Q<Button>("ActionThree");
+        m_actionFour = m_rootUI.Q<Button>("ActionFour");
+
+        m_actionOne.clicked += OnActionOneClicked;
+        m_actionTwo.clicked += OnActionTwoClicked;
+        m_actionThree.clicked += OnActionThreeClicked;
+        m_actionFour.clicked += OnActionFourClicked;
     }
 
     private void UpdateRoundInformation(int roundNumber)
@@ -29,28 +107,35 @@ public class GameplayUIControl : MonoBehaviour
         m_roundFade.Show();
     }
 
-    private void UpdateTurnInformation(TurnOrder turn)
+    private void UpdateTurnInformation(TurnOrder turn, bool isTurnSkipped)
     {
-        switch(turn)
+        if (isTurnSkipped)
         {
-            case TurnOrder.TURN_ORDER_PLAYER:
-                m_turnInfo.text = "Player's Turn";
-                break;
-            case TurnOrder.TURN_ORDER_NPC1:
-                m_turnInfo.text = "NPC1's Turn";
-                break;
-            case TurnOrder.TURN_ORDER_NPC2:
-                m_turnInfo.text = "NPC2's Turn";
-                break;
-            case TurnOrder.TURN_ORDER_NPC3:
-                m_turnInfo.text = "NPC3's Turn";
-                break;
-            case TurnOrder.TURN_ORDER_NPC4:
-                m_turnInfo.text = "NPC4's Turn";
-                break;
-            case TurnOrder.TURN_ORDER_NPC5:
-                m_turnInfo.text = "NPC5's Turn";
-                break;
+            m_turnInfo.text = "Turn Skipped!";
+        }
+        else
+        {
+            switch (turn)
+            {
+                case TurnOrder.TURN_ORDER_PLAYER:
+                    m_turnInfo.text = "Player's Turn";
+                    break;
+                case TurnOrder.TURN_ORDER_NPC1:
+                    m_turnInfo.text = "NPC1's Turn";
+                    break;
+                case TurnOrder.TURN_ORDER_NPC2:
+                    m_turnInfo.text = "NPC2's Turn";
+                    break;
+                case TurnOrder.TURN_ORDER_NPC3:
+                    m_turnInfo.text = "NPC3's Turn";
+                    break;
+                case TurnOrder.TURN_ORDER_NPC4:
+                    m_turnInfo.text = "NPC4's Turn";
+                    break;
+                case TurnOrder.TURN_ORDER_NPC5:
+                    m_turnInfo.text = "NPC5's Turn";
+                    break;
+            }
         }
 
         m_turnFade.Show();

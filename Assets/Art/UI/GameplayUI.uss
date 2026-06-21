@@ -11,3 +11,44 @@
 .notify--visible {
     opacity: 1;
 }
+
+.remotebutton {
+    background-color: rgb(255, 255, 255);
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    border-top-left-radius: 90px;
+    border-top-right-radius: 90px;
+    border-bottom-right-radius: 90px;
+    border-bottom-left-radius: 90px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
+}
+
+.remotebutton:hover {
+    transition-property: background-color;
+    background-color: rgb(30, 255, 0);
+}
+
+.remotebase {
+    transition-property: scale, translate;
+    transition-duration: 0.5s, 0.5s;
+    transition-timing-function: ease-in-out, ease-in-out;
+}
+
+.remotebase:hover {
+    transition-property: scale, translate;
+    transition-duration: 0.5s, 0.5s;
+    transition-timing-function: ease-in-out, ease-in-out;
+    scale: 2 2 2;
+    position: absolute;
+    right: 200px;
+    bottom: 200px;
+    translate: -80px -100px;
+}

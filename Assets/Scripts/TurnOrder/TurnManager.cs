@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 public enum RoundState
 {
     ROUND_STATE_INVALID = -1,
@@ -36,9 +38,11 @@ public class TurnManager : MonoBehaviour
 {
     public static TurnManager Instance { get; private set; }
     public static event Action<int> OnRoundStartNotify;
-    public static event Action<TurnOrder> OnTurnStartNotify;
+    public static event Action<TurnOrder, bool> OnTurnStartNotify;
+
     public RoundState CurrentRoundState { get { return m_roundState; } }
     public TurnState CurrentTurnState {  get { return m_turnState; } }
+    public TurnOrder CurrentTurn { get { return m_currentTurn; } }
     public int NumRounds { get  { return m_numRounds; } }
     public bool IsPaused { get; set; } = false;
     public bool IsGameOver { get; set; } = false;
@@ -47,32 +51,53 @@ public class TurnManager : MonoBehaviour
 
     private RoundState m_roundState = RoundState.ROUND_STATE_INVALID;
     private TurnState m_turnState = TurnState.TURN_STATE_INVALID;
+    private TurnOrder m_currentTurn = TurnOrder.TURN_ORDER_INVALID;
     private int m_numRounds = 0;
-    bool m_actionChosen = false;
+    private bool m_actionChosen = false;
+    private bool m_actionComplete = false;
+    private bool m_skippingNextTurn = false;
 
     [SerializeField] private float m_roundDelayTime = 1.5f;
     [SerializeField] private float m_turnDelayTime = 1.5f;
     [SerializeField] private AIManager m_aiManager;
     private ActionType m_currTurnAction = ActionType.ACTION_TYPE_INVALID;
+    private List<bool> m_turnSkips;
+    public bool IsPlayersTurn()
+    {
+        return m_currentTurn == TurnOrder.TURN_ORDER_PLAYER;
+    }
 
-    // Called at the end of a turn's given phase
-    // Returns true if advances to a new turn, false otherwise
-    public bool AdvanceTurnState()
+    public bool IsTurnSkipped(TurnOrder turn)
+    {
+        int turnToInt = (int)turn;
+        return m_turnSkips[turnToInt];
+    }
+
+    public void MarkNextTurnAsSkipped(TurnOrder turn)
+    {
+        int nextTurn = ((int)turn + 1) % (int)TurnOrder.TURN_ORDER_SIZE;
+        Assert.IsTrue(nextTurn >= 0 && nextTurn < (int)TurnOrder.TURN_ORDER_SIZE);
+
+        m_turnSkips[nextTurn] = true;
+    }
+
+    public void MarkActionComplete()
+    {
+        m_actionComplete = true;
+    }
+
+    public void AdvanceTurnState()
     {
         int advanceTurnValue = ((int)m_turnState + 1) % (int)TurnState.TURN_STATE_SIZE;
         Debug.Log("Turn was: " + m_turnState.ToString() + " | Is now: " + ((TurnState)advanceTurnValue).ToString());
         m_turnState = (TurnState)advanceTurnValue;
-        return advanceTurnValue == (int)TurnState.TURN_STATE_START;
     }
 
-    // Called when all turns are finished and to move onto the next round phase (Called at very end)
-    // Returns true if advances to a new round, false otherwise
-    private bool AdvanceRoundState()
+    private void AdvanceRoundState()
     {
         int advanceRoundValue = ((int)m_roundState + 1) % (int)RoundState.ROUND_STATE_SIZE;
         Debug.Log("Round was: " + m_roundState.ToString() + " | Is now: " + ((RoundState)advanceRoundValue).ToString());
         m_roundState = (RoundState)advanceRoundValue;
-        return advanceRoundValue == (int)RoundState.ROUND_STATE_START;
     }
 
     private void OnPlayerSelectedAction()
@@ -87,7 +112,9 @@ public class TurnManager : MonoBehaviour
         m_currTurnAction = ActionType.ACTION_TYPE_INVALID;
         if (turn == TurnOrder.TURN_ORDER_PLAYER)
         {
-            yield return new WaitUntil(() => m_actionChosen);
+            yield return new WaitForSecondsRealtime(m_turnDelayTime);
+            m_currTurnAction = ActionType.ACTION_TYPE_PASS;
+            //yield return new WaitUntil(() => m_actionChosen);
         }
         else if (turn > TurnOrder.TURN_ORDER_PLAYER && turn < TurnOrder.TURN_ORDER_SIZE)
         {
@@ -100,31 +127,50 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitOnActionPerformed()
+    private IEnumerator WaitOnActionPerformed(TurnOrder turn)
     {
         if (m_currTurnAction == ActionType.ACTION_TYPE_INVALID)
         {
             Debug.LogWarning("Invalid Action passed in");
             yield break;
         }
-        yield return new WaitForSecondsRealtime(m_turnDelayTime);
 
-        // TODO AQIN: UpdateBoard Manager with the action
+        if (turn == TurnOrder.TURN_ORDER_PLAYER)
+        {
+            BoardManager.Instance.PerformBoardMove(MoveType.MOVE_TYPE_PASS);
+
+            //yield return new WaitUntil(() => m_actionChosen);
+        }
+        else if (turn > TurnOrder.TURN_ORDER_PLAYER && turn < TurnOrder.TURN_ORDER_SIZE)
+        {
+            m_aiManager.PerformAction(turn, m_currTurnAction);
+        }
+        else
+        {
+            Debug.LogError("Asking for a turn from an invalid turn order");
+        }
+
+        yield return new WaitUntil(() => m_actionComplete);
     }
 
     private IEnumerator UpdateTurnInternal(TurnOrder turn)
     {
         Assert.IsTrue(m_turnState == TurnState.TURN_STATE_START);
 
-        OnTurnStartNotify?.Invoke(turn);
+        bool turnSkipped = IsTurnSkipped(turn);
+        OnTurnStartNotify?.Invoke(turn, turnSkipped);        
 
         yield return new WaitForSecondsRealtime(m_turnDelayTime);
+        if (turnSkipped)
+        {
+            yield break;
+        }
 
         AdvanceTurnState();
         yield return StartCoroutine(WaitOnActionChosen(turn));
 
         AdvanceTurnState();
-        yield return StartCoroutine(WaitOnActionPerformed());
+        yield return StartCoroutine(WaitOnActionPerformed(turn));
 
         AdvanceTurnState();
         yield return new WaitForSecondsRealtime(m_turnDelayTime);
@@ -144,7 +190,9 @@ public class TurnManager : MonoBehaviour
 
         for (int i = (int)TurnOrder.TURN_ORDER_PLAYER; i < (int)TurnOrder.TURN_ORDER_SIZE; ++i)
         {
+            m_currentTurn = (TurnOrder)i;
             yield return StartCoroutine(UpdateTurnInternal((TurnOrder)i));
+            BoardManager.Instance.RotateBoard();
         }
 
         AdvanceRoundState(); // End
@@ -170,6 +218,9 @@ public class TurnManager : MonoBehaviour
             return;
         }
         Instance = this;
+
+        int skipSize = (int)TurnOrder.TURN_ORDER_SIZE;
+        m_turnSkips = Enumerable.Repeat(false, skipSize).ToList();
     }
 
     private void Start()

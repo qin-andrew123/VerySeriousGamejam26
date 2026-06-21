@@ -224,6 +224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 5
+  m_opponent: -1
 --- !u!1 &416398492
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,6 +330,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 2
+  m_opponent: -1
 --- !u!1 &673629522
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,8 +375,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: deec83e92daa1f544baadb811e87bc4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TurnManager
-  m_roundDelayTime: 2
-  m_turnDelayTime: 2
+  m_roundDelayTime: 3
+  m_turnDelayTime: 3
   m_aiManager: {fileID: 1611629857}
 --- !u!1 &729409187
 GameObject:
@@ -481,6 +483,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 3
+  m_opponent: -1
 --- !u!1 &970129587
 GameObject:
   m_ObjectHideFlags: 0
@@ -491,6 +494,7 @@ GameObject:
   m_Component:
   - component: {fileID: 970129589}
   - component: {fileID: 970129588}
+  - component: {fileID: 970129590}
   m_Layer: 0
   m_Name: TableTemp
   m_TagString: Untagged
@@ -572,6 +576,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 35}
+--- !u!114 &970129590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970129587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57807da3f7e9c0d4fa980557c0d0fceb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BoardManager
+  m_angleOfRotation: 60
+  m_delayTime: 1
+  m_foodSpawnPoint: []
 --- !u!1 &1066903605
 GameObject:
   m_ObjectHideFlags: 0
@@ -677,6 +696,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 4
+  m_opponent: -1
 --- !u!1 &1237807384
 GameObject:
   m_ObjectHideFlags: 0
@@ -824,6 +844,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1576773971}
   - component: {fileID: 1576773970}
+  - component: {fileID: 1576773972}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -905,6 +926,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1576773972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1576773969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e9c980cb89c4174ab36cf9580604e28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInput
 --- !u!1 &1596941441
 GameObject:
   m_ObjectHideFlags: 0
@@ -1010,6 +1043,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 1
+  m_opponent: -1
 --- !u!1 &1611629856
 GameObject:
   m_ObjectHideFlags: 0
@@ -1090,8 +1124,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24ff21f686c3e344587249d733eed386, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameplayUIControl
-  m_roundFadeTime: 1
-  m_turnFadeTime: 1
+  m_roundFadeTime: 2
+  m_turnFadeTime: 2
 --- !u!114 &1626048718
 MonoBehaviour:
   m_ObjectHideFlags: 0

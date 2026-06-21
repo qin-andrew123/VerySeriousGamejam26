@@ -6,21 +6,26 @@ using System;
 public enum InputState
 {
     INPUT_STATE_INVALID = -1,
-    INPUT_STATE_GAMEPLAY = 0,
-    INPUT_STATE_DIALOGUE = 1,
+    INPUT_STATE_GAMEPLAY,
+    INPUT_STATE_DIALOGUE,
+    INPUT_STATE_MENU
 }
 
 public class PlayerInput : MonoBehaviour
 {
+    public static PlayerInput Instance { get; private set; }
+    public static event Action OnPlayerSelectedAction;
+    public InputState CurrentInputState { get { return m_currentInputState; } }
+    public bool CanInteract { get { return m_canInteract; } set { m_canInteract = value; } }
     private InputActionMap m_gameplayMap;
     private InputActionMap m_dialogueMap;
+    private InputActionMap m_menusMap;
+
     private InputState m_currentInputState = InputState.INPUT_STATE_GAMEPLAY;
-    private Vector2 m_velocity = Vector2.zero;
+
     private float m_interactCooldown = 0.5f;
     private float m_interactTimer = 0.0f;
     private bool m_canInteract = false;
-
-    public static event Action OnPlayerSelectedAction;
     private void ChangeInputState(InputState state)
     {
         switch (state)
@@ -28,11 +33,19 @@ public class PlayerInput : MonoBehaviour
             case InputState.INPUT_STATE_GAMEPLAY:
                 m_gameplayMap.Enable();
                 m_dialogueMap.Disable();
+                m_menusMap.Disable();
                 break;
 
             case InputState.INPUT_STATE_DIALOGUE:
                 m_gameplayMap.Disable();
                 m_dialogueMap.Enable();
+                m_menusMap.Disable();
+                break;
+
+            case InputState.INPUT_STATE_MENU:
+                m_gameplayMap.Disable();
+                m_dialogueMap.Disable();
+                m_menusMap.Enable();
                 break;
 
             default:
@@ -45,13 +58,19 @@ public class PlayerInput : MonoBehaviour
 
     private void Awake()
     {
-        m_gameplayMap = InputSystem.actions.FindActionMap("Gameplay");
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+
+        m_gameplayMap = InputSystem.actions.FindActionMap("Player");
         m_dialogueMap = InputSystem.actions.FindActionMap("Dialogue");
+        m_menusMap = InputSystem.actions.FindActionMap("UI");
         Assert.IsNotNull(m_gameplayMap);
         Assert.IsNotNull(m_dialogueMap);
-    }
-    private void OnDestroy()
-    {
+        Assert.IsNotNull(m_menusMap);
     }
 
     private void PollGameplayInput()
@@ -61,17 +80,19 @@ public class PlayerInput : MonoBehaviour
             return;
         }
 
-        InputAction moveAction = m_gameplayMap.FindAction("Move");
-        if (moveAction == null)
+        if (!m_canInteract)
         {
-            Debug.LogError("Move Action is null in gameplay map. Make sure to add it in.");
-            return;
+            if (m_interactTimer <= 0.0f)
+            {
+                m_interactTimer = m_interactCooldown;
+                m_canInteract = true;
+            }
+            else
+            {
+                m_interactTimer -= Time.deltaTime;
+            }
         }
-
-        if (moveAction.IsPressed())
-        {
-            m_velocity = moveAction.ReadValue<Vector2>().normalized;
-        }
+        
     }
 
     private void PollDialogueInput()
@@ -94,6 +115,13 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
+    private void PollMenuInput()
+    {
+        if (!m_menusMap.enabled)
+        {
+            return;
+        }
+    }
     private void PollInput()
     {
         if (m_interactTimer <= 0)
@@ -106,6 +134,7 @@ public class PlayerInput : MonoBehaviour
         }
         PollGameplayInput();
         PollDialogueInput();
+        PollMenuInput();
     }
 
     private void Update()
