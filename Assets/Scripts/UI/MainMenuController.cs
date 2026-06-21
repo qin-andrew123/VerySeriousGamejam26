@@ -4,7 +4,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-// TODO BRIEZ: Prob remove old MainMenuControl at some point
+/* TODO BRIEZ:
+ * Progress bar while loading level
+ * Leaderboard population
+ */
+
 public class MainMenuController : MonoBehaviour
 {
     // Inspector properties
@@ -23,16 +27,16 @@ public class MainMenuController : MonoBehaviour
     private void OnEnable()
     {
         _uiDocument = GetComponent<UIDocument>();
-        if (_uiDocument is null)
+        if (_uiDocument == null)
         {
             Debug.LogError("Unable to locate Main Menu UIDocument!");
             return;
         }
 
         // Get visual elements
-        _newGameButton = _uiDocument?.rootVisualElement.Q("NewGame") as Button;
-        _settingsButton = _uiDocument?.rootVisualElement.Q("Settings") as Button;
-        _exitButton = _uiDocument?.rootVisualElement.Q("Exit") as Button;
+        _newGameButton = _uiDocument.rootVisualElement.Q("NewGame") as Button;
+        _settingsButton = _uiDocument.rootVisualElement.Q("Settings") as Button;
+        _exitButton = _uiDocument.rootVisualElement.Q("Exit") as Button;
 
         SubscribeButtons();
     }
@@ -44,21 +48,21 @@ public class MainMenuController : MonoBehaviour
 
     private void SubscribeButtons()
     {
-        if (_newGameButton is not null)
+        if (_newGameButton != null)
             _newGameButton.clicked += OnClickNewGame;
-        if (_settingsButton is not null)
+        if (_settingsButton != null)
             _settingsButton.clicked += OnClickSettings;
-        if (_exitButton is not null)
+        if (_exitButton != null)
             _exitButton.clicked += OnExit;
     }
 
     private void UnsubscribeButtons()
     {
-        if (_newGameButton is not null)
+        if (_newGameButton != null)
             _newGameButton.clicked -= OnClickNewGame;
-        if (_settingsButton is not null)
+        if (_settingsButton != null)
             _settingsButton.clicked -= OnClickSettings;
-        if (_exitButton is not null)
+        if (_exitButton != null)
             _exitButton.clicked -= OnExit;
     }
     #endregion
@@ -74,7 +78,7 @@ public class MainMenuController : MonoBehaviour
     {
         // Display settings menu
 
-        if (_settingsDocument is null)
+        if (_settingsDocument == null)
         {
             Debug.LogError("Settings UIDocument not found!");
             return;
@@ -99,7 +103,6 @@ public class MainMenuController : MonoBehaviour
         AsyncOperation loadOperation = SceneManager.LoadSceneAsync(_firstLevelName);
         loadOperation.allowSceneActivation = false;
 
-        // TODO BRIEZ: Play progress bar while scene loading
         while (!loadOperation.isDone)
         {
             if (loadOperation.progress >= 0.9f)

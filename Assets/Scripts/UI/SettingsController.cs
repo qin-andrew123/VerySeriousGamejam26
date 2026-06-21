@@ -4,6 +4,23 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
+/*
+ * TODO BRIEZ:
+ * 
+ * Confirmation dialog for "Back" and "Reset to default"
+ * => Shown if unsaved changes for former; always for latter. Cancel returns.
+ * => Should have some var text setting to tweak message to context
+ * 
+ * Visual indicator for unsaved changes
+ * => Grayed-out "Save" button? Maybe
+ * => Highlight/colour altered settings? Perchance.
+ * 
+ * Want the volume values shown next to slider.
+ * 
+ * Un/subscription null-checking
+ * => Frankly gets repetitive as-is. Not high priority. Just thinking.
+ */
+
 public struct Settings
 {
     public int MusicVolume { get; set; }
@@ -36,8 +53,8 @@ public class SettingsController : MonoBehaviour
     {
         _uiDocument = GetComponent<UIDocument>();
 
-        if (_uiDocument is null ||
-            _uiDocument.rootVisualElement is null)
+        if (_uiDocument == null ||
+            _uiDocument.rootVisualElement == null)
         {
             Debug.LogError("Unable to find Settings UIDocument or its rot visual element!");
             return;
@@ -56,13 +73,17 @@ public class SettingsController : MonoBehaviour
         SubscribeButtons();
 
         // Restore settings from saved PlayerPrefs
-        _musicVolumeSlider?.SetValueWithoutNotify(PlayerPrefs.GetInt("MusicVolume", 100));
-        _sfxVolumeSlider?.SetValueWithoutNotify(PlayerPrefs.GetInt("SfxVolume", 100));
         _lastSavedSettings = new Settings()
         {
-            MusicVolume = _musicVolumeSlider.value,
-            SfxVolume = _sfxVolumeSlider.value
+            MusicVolume = PlayerPrefs.GetInt("MusicVolume", 100),
+            SfxVolume = PlayerPrefs.GetInt("SfxVolume", 100)
         };
+
+        if (_musicVolumeSlider != null)
+            _musicVolumeSlider.SetValueWithoutNotify(_lastSavedSettings.MusicVolume);
+
+        if (_sfxVolumeSlider != null)
+            _sfxVolumeSlider.SetValueWithoutNotify(_lastSavedSettings.SfxVolume);
     }
 
     private void OnDisable()
@@ -72,21 +93,21 @@ public class SettingsController : MonoBehaviour
 
     private void SubscribeButtons()
     {
-        if (_backButton is not null)
+        if (_backButton != null)
             _backButton.clicked += OnClickBack;
-        if (_resetToDefaultsButton is not null)
+        if (_resetToDefaultsButton != null)
             _resetToDefaultsButton.clicked += OnClickResetToDefaults;
-        if (_saveButton is not null)
+        if (_saveButton != null)
             _saveButton.clicked += OnClickSave;
     }
 
     private void UnsubscribeButtons()
     {
-        if (_backButton is not null)
+        if (_backButton != null)
             _backButton.clicked -= OnClickBack;
-        if (_resetToDefaultsButton is not null)
+        if (_resetToDefaultsButton != null)
             _resetToDefaultsButton.clicked -= OnClickResetToDefaults;
-        if (_saveButton is not null)
+        if (_saveButton != null)
             _saveButton.clicked -= OnClickSave;
     }
     #endregion
@@ -97,7 +118,6 @@ public class SettingsController : MonoBehaviour
         if (HasUnsavedChanges())
         {
             Debug.Log("Yoink! Say bye-bye to your changes i guess");
-            // TODO BRIEZ: raise conf dialog => Cancel returns
         }
 
         // Discard any unsaved changes
@@ -109,29 +129,21 @@ public class SettingsController : MonoBehaviour
 
     private void OnClickResetToDefaults()
     {
-        // TODO BRIEZ: raise conf dialog
-        /*
-         * Would ideally want to reuse some visual for "Back" confirmation dialog
-         * though w/ minor tweaks to the message
-         * i.e. "I see you have unsaved changes that you will lose" vs.
-         * "I haven't bothered to check, but everything will be nuked"
-         */
+        if (_musicVolumeSlider != null)
+            _musicVolumeSlider.SetValueWithoutNotify(DefaultMusicVolume);
 
-        _sfxVolumeSlider?.SetValueWithoutNotify(DefaultSfxVolume);
-        _musicVolumeSlider?.SetValueWithoutNotify(DefaultMusicVolume);
+        if (_sfxVolumeSlider != null)
+            _sfxVolumeSlider.SetValueWithoutNotify(DefaultSfxVolume);
 
         SetSavePoint(raiseSaveFlag: false);
     }
 
     private void OnClickSave() => SetSavePoint();
 
-    // TODO BRIEZ: Saving should have some visual indicator
-    // Unsaved changes diff colour in UI? Graying out when no changes? Perchance.
     private void SetSavePoint(bool raiseSaveFlag = true)
     {
         // Save all settings at current value
-        // TODO/NOTE BRIEZ: should these pref names be consts? aaaughhhahahaaha maybe
-
+        
         PlayerPrefs.SetInt("MusicVolume", _musicVolumeSlider.value);
         _lastSavedSettings.MusicVolume = _musicVolumeSlider.value;
         Debug.Log($"Set MusicVolume to {_musicVolumeSlider.value}%");
@@ -143,8 +155,11 @@ public class SettingsController : MonoBehaviour
 
     private void RollbackLastSavePoint()
     {
-        _musicVolumeSlider?.SetValueWithoutNotify(_lastSavedSettings.MusicVolume);
-        _sfxVolumeSlider?.SetValueWithoutNotify(_lastSavedSettings.SfxVolume);
+        if (_musicVolumeSlider != null)
+            _musicVolumeSlider.SetValueWithoutNotify(_lastSavedSettings.MusicVolume);
+
+        if (_sfxVolumeSlider != null)
+            _sfxVolumeSlider.SetValueWithoutNotify(_lastSavedSettings.SfxVolume);
     }
 
     private bool HasUnsavedChanges() =>
