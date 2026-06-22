@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 5
-  m_opponent: -1
+  m_opponent: 4
 --- !u!1 &416398492
 GameObject:
   m_ObjectHideFlags: 0
@@ -330,7 +330,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 2
-  m_opponent: -1
+  m_opponent: 1
 --- !u!1 &600354660
 GameObject:
   m_ObjectHideFlags: 0
@@ -543,7 +543,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 3
-  m_opponent: -1
+  m_opponent: 2
 --- !u!1 &970129587
 GameObject:
   m_ObjectHideFlags: 0
@@ -769,7 +769,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 4
-  m_opponent: -1
+  m_opponent: 3
 --- !u!1 &1237807384
 GameObject:
   m_ObjectHideFlags: 0
@@ -1166,7 +1166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 1
-  m_opponent: -1
+  m_opponent: 0
 --- !u!1 &1611629856
 GameObject:
   m_ObjectHideFlags: 0

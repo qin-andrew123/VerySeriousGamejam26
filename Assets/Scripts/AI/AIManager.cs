@@ -15,8 +15,7 @@ public class AIManager : MonoBehaviour
             return ActionType.ACTION_TYPE_INVALID;
         }
 
-        return ActionType.ACTION_TYPE_DEFAULT;
-        // return m_AIBehaviors[properIndex].GetAction();
+        return m_AIBehaviors[properIndex].GetAction();
     }
 
     public void PerformAction(TurnOrder turn, ActionType actionType)

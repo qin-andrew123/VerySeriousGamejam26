@@ -40,10 +40,10 @@ public class TurnManager : MonoBehaviour
     public static event Action<int> OnRoundStartNotify;
     public static event Action<TurnOrder, bool> OnTurnStartNotify;
 
-    public RoundState CurrentRoundState { get { return _roundState; } }
-    public TurnState CurrentTurnState {  get { return _turnState; } }
-    public TurnOrder CurrentTurn { get { return _currentTurn; } }
-    public int NumRounds { get  { return _numRounds; } }
+    public RoundState CurrentRoundState => _roundState;
+    public TurnState CurrentTurnState => _turnState;
+    public TurnOrder CurrentTurn => _currentTurn;
+    public int NumRounds => _numRounds;
     public bool IsPaused { get; set; } = false;
     public bool IsGameOver { get; set; } = false;
     public bool RoundUIAnimationComplete { get; set; } = false;
