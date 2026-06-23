@@ -653,17 +653,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57807da3f7e9c0d4fa980557c0d0fceb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardManager
-  m_angleOfRotation: 60
-  m_rotationDuration: 1
-  m_delayTime: 1
-  m_foodSpawnPoint:
+  _startingLives: 0
+  _angleOfRotation: 60
+  _rotationDuration: 1
+  _delayTime: 0.5
+  _foodSpawnPoint:
   - {fileID: 1877732947}
   - {fileID: 600354661}
   - {fileID: 653108887}
   - {fileID: 1245730103}
   - {fileID: 2103388975}
-  m_itemSpawnPrefabs:
+  _itemSpawnPrefabs:
   - {fileID: 9062750930964181278, guid: a7e62a26bee36a341bd80ce85db31099, type: 3}
+  _actorPositions:
+  - {fileID: 1576773969}
+  - {fileID: 1596941441}
+  - {fileID: 416398492}
+  - {fileID: 729409187}
+  - {fileID: 1066903605}
+  - {fileID: 292215413}
 --- !u!1 &1066903605
 GameObject:
   m_ObjectHideFlags: 0

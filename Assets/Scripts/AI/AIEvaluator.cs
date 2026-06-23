@@ -63,7 +63,7 @@ public class AIEvaluator : MonoBehaviour
         }
 
         // Check positions based on simulation Currently, there is only one but 
-        List<Vector3> currentPositions = BoardManager.Instance.GetCurrentPositions();
+        List<Vector3> currentPositions = BoardManager.Instance.GetItemCurrentPositions();
         List<Vector3> predictedPositions = BoardManager.Instance.SimulateRotateBoard(2, BoardManager.Instance.TurningClockwise);
         for (int i = 0; i < predictedPositions.Count; ++i)
         {
@@ -129,7 +129,7 @@ public class AIEvaluator : MonoBehaviour
         }
 
         // Check positions based on simulation Currently, there is only one but 
-        List<Vector3> currentPositions = BoardManager.Instance.GetCurrentPositions();
+        List<Vector3> currentPositions = BoardManager.Instance.GetItemCurrentPositions();
         List<Vector3> predictedPositions = BoardManager.Instance.SimulateRotateBoard(1, !BoardManager.Instance.TurningClockwise);
         for (int i = 0; i < predictedPositions.Count; ++i)
         {
@@ -192,7 +192,7 @@ public class AIEvaluator : MonoBehaviour
         }
 
         // Check positions based on simulation Currently, there is only one but 
-        List<Vector3> currentPositions = BoardManager.Instance.GetCurrentPositions();
+        List<Vector3> currentPositions = BoardManager.Instance.GetItemCurrentPositions();
         List<Vector3> predictedPositions = BoardManager.Instance.SimulateRotateBoard(2, BoardManager.Instance.TurningClockwise);
         for (int i = 0; i < predictedPositions.Count; ++i)
         {
@@ -263,7 +263,7 @@ public class AIEvaluator : MonoBehaviour
         }
 
         // Check positions based on simulation Currently, there is only one but 
-        List<Vector3> currentPositions = BoardManager.Instance.GetCurrentPositions();
+        List<Vector3> currentPositions = BoardManager.Instance.GetItemCurrentPositions();
         List<Vector3> predictedPositions = BoardManager.Instance.SimulateRotateBoard(1, !BoardManager.Instance.TurningClockwise);
         for (int i = 0; i < predictedPositions.Count; ++i)
         {
@@ -325,7 +325,7 @@ public class AIEvaluator : MonoBehaviour
     // Special 5% chance for chaos so 5% chance to do something otherwise pass.
     private ActionType EvaluationNPC5()
     {
-        if (Random.Range(0f, 1f) < 0.03f)
+        if (Random.Range(0f, 1f) < 0.05f)
         {
             return ActionType.ACTION_TYPE_DEFAULT;
         }

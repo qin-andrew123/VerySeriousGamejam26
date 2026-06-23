@@ -1,39 +1,41 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 public class BoardManager : MonoBehaviour
 {
     public static BoardManager Instance { get; private set; }
     public bool TurningClockwise { get; private set; } = true;
-    [SerializeField] private float m_angleOfRotation = 60.0f;
-    [SerializeField] private float m_rotationDuration = 1.0f;
-    [SerializeField] private float m_delayTime = 0.5f;
-    [SerializeField] private List<Transform> m_foodSpawnPoint;
-    [SerializeField] private List<GameObject> m_itemSpawnPrefabs;
-    private List<GameObject> _currentlyAvailableItems = new List<GameObject>();
-    private int m_numRotations = 1;
-    private bool m_isRotating = false;
 
-    // TODO AQIN: make this into like Item tag + position
-    public List<Vector3> GetCurrentPositions()
+    [SerializeField] private int _startingLives;
+    [SerializeField] private float _angleOfRotation = 60.0f;
+    [SerializeField] private float _rotationDuration = 1.0f;
+    [SerializeField] private float _delayTime = 0.5f;
+    [SerializeField] private List<Transform> _foodSpawnPoint;
+    [SerializeField] private List<GameObject> _itemSpawnPrefabs;
+    [SerializeField] private List<GameObject> _actorPositions;
+
+    private List<GoalItem> _currentlyAvailableItems = new List<GoalItem>();
+    private int m_numRotations = 0;
+    private bool m_isRotating = false;
+    private bool _isPlayerConstraintSatisfied = false;
+
+    public List<Vector3> GetItemCurrentPositions()
     {
         List<Vector3> result = new List<Vector3>();
         for (int i = 0; i < _currentlyAvailableItems.Count; ++i)
         {
-            result.Add(_currentlyAvailableItems[i].transform.position);
+            result.Add(_currentlyAvailableItems[i].gameObject.transform.position);
         }
 
         return result;
     }
 
-    // TODO AQIN: make this into like Item tag + position
     public List<Vector3> SimulateRotateBoard(int numRotations, bool isClockwise)
     {
         List<Vector3> result = new List<Vector3>();
-        float totalAngle = m_angleOfRotation * numRotations * (isClockwise ? -1f : 1f);
+        float totalAngle = _angleOfRotation * numRotations * (isClockwise ? -1f : 1f);
 
         Quaternion startRot = transform.rotation;
         Quaternion endRot = startRot * Quaternion.Euler(0f, 0f, totalAngle);
@@ -49,12 +51,20 @@ public class BoardManager : MonoBehaviour
 
     public void InitializeBoard()
     {
-        // TODO AQIN: More advanced calculations: based on rotations but for now just randomly pick a spot
-        int randomSpawnIndex = Random.Range(0, m_foodSpawnPoint.Count);
-        int randomItemIndex = Random.Range(0, m_itemSpawnPrefabs.Count);
+        int randomItemIndex = Random.Range(0, _itemSpawnPrefabs.Count);
 
-        GameObject go = Instantiate(m_itemSpawnPrefabs[randomItemIndex], m_foodSpawnPoint[randomSpawnIndex]);
-        _currentlyAvailableItems.Add(go);
+        GameObject go = Instantiate(_itemSpawnPrefabs[randomItemIndex]);
+        GoalItem prefabGoalItem = go.GetComponent<GoalItem>();
+        Assert.IsNotNull(prefabGoalItem);
+        _currentlyAvailableItems.Add(prefabGoalItem);
+
+        for (int i = 0; i < _currentlyAvailableItems.Count; ++i)
+        {
+            GenerateConstraintsForItem(i);
+            DetermineSpawnPointForItem(_currentlyAvailableItems[i]);
+        }
+        
+        int randomSpawnIndex = Random.Range(0, _foodSpawnPoint.Count);
     }
 
     public void RotateBoardByAmount(int numTurns)
@@ -95,6 +105,96 @@ public class BoardManager : MonoBehaviour
         }
         StartCoroutine(ActionCompleteDelay());
     }
+    
+    private void DetermineSpawnPointForItem(GoalItem item)
+    {
+        List<TurnOrder> validStartingLocations = new List<TurnOrder>();
+
+        for (int i = 0; i < _foodSpawnPoint.Count; ++i)
+        {
+            TurnOrder spawnPointAsActor = (TurnOrder)i;
+            if (!item.SatisfyingActors.Contains(spawnPointAsActor))
+            {
+                validStartingLocations.Add(spawnPointAsActor);
+            }
+        }
+
+        // Same size as validStartingLocations
+        List<float> weights = new List<float>();
+        float totalWeight = 0.0f;
+        for (int i = 0; i < validStartingLocations.Count; ++i)
+        {
+            int validSpawnIndex = (int)validStartingLocations[i];
+            Vector3 spawnPointPosition = _foodSpawnPoint[validSpawnIndex].transform.position;
+
+            float calculatedWeight = 0.0f;
+            foreach (TurnOrder turn in item.SatisfyingActors)
+            {
+                int satisfyingIndex = (int)turn;
+                Vector3 satisfyingSpawnPointPosition = _actorPositions[satisfyingIndex].transform.position;
+                calculatedWeight += Vector3.SqrMagnitude(satisfyingSpawnPointPosition - spawnPointPosition);
+            }
+
+            totalWeight += calculatedWeight;
+            weights.Add(calculatedWeight);
+        }
+
+        foreach (float f in weights)
+        {
+            Debug.Log($"Weight: {f}");
+        }
+
+        float randValue = Random.Range(0, totalWeight);
+        int randIndex = 0;
+        for (int i = 0; i < validStartingLocations.Count; ++i)
+        {
+            if (weights[i] > randValue)
+            {
+                randIndex = i;
+                break;
+            }
+            randValue -= weights[i];
+        }
+
+        item.gameObject.transform.parent = _foodSpawnPoint[randIndex].transform;
+        item.gameObject.transform.position = _foodSpawnPoint[randIndex].transform.position;
+    }
+
+    private void PickActorConstraint(GoalItem item, int numActorsToPick)
+    {
+        List<int> validIndicies = new List<int>();
+        for (int i = (int)TurnOrder.TURN_ORDER_NPC1; i < (int)TurnOrder.TURN_ORDER_SIZE; ++i)
+        {
+            validIndicies.Add(i);
+        }
+
+        if (!_isPlayerConstraintSatisfied)
+        {
+            _isPlayerConstraintSatisfied = true;
+            item.AddActorAsSatisfying(TurnOrder.TURN_ORDER_PLAYER);
+            int playerIndex = (int)TurnOrder.TURN_ORDER_PLAYER;
+            validIndicies.RemoveAt(playerIndex);
+
+            --numActorsToPick;
+        }
+
+        while (numActorsToPick > 0)
+        {
+            int randIndex = Random.Range(0, validIndicies.Count);
+            TurnOrder randomActor = (TurnOrder)validIndicies[randIndex];
+            item.AddActorAsSatisfying(randomActor);
+            validIndicies.RemoveAt(randIndex);
+            --numActorsToPick;
+        }
+    }
+
+    private void GenerateConstraintsForItem(int index)
+    {
+        GoalItem item = _currentlyAvailableItems[index];
+        PickActorConstraint(item, 2);
+        Assert.IsTrue(_isPlayerConstraintSatisfied, "Validating Items but Player Constraint isn't satisfied yet");
+        Assert.IsTrue(item.SatisfyingActors.Count >= 2);
+    }
 
     private Vector3 CalculateItemLocation(Transform parent, Transform obj, Quaternion simulatedParentRotation)
     {
@@ -132,15 +232,15 @@ public class BoardManager : MonoBehaviour
     {
         m_isRotating = true;
 
-        float totalAngle = m_angleOfRotation * m_numRotations * (TurningClockwise ? -1f : 1f);
+        float totalAngle = _angleOfRotation * m_numRotations * (TurningClockwise ? -1f : 1f);
         
         Quaternion startRot = transform.rotation;
         Quaternion endRot = startRot * Quaternion.Euler(0f, 0f, totalAngle);
         float elapsed = 0f;
-        while (elapsed < m_rotationDuration)
+        while (elapsed < _rotationDuration)
         {
             elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / m_rotationDuration);
+            float t = Mathf.Clamp01(elapsed / _rotationDuration);
             float currentAngle = Mathf.Lerp(0f, totalAngle, t);
             transform.rotation = startRot * Quaternion.Euler(0f, 0f, currentAngle);
             yield return null;
@@ -149,12 +249,12 @@ public class BoardManager : MonoBehaviour
         transform.rotation = endRot;
         yield return new WaitForSeconds(0.3f);
         m_isRotating = false;
-        m_numRotations = 1;
+        m_numRotations = 0;
     }
 
     private IEnumerator ActionCompleteDelay()
     {
-        yield return new WaitForSeconds(m_delayTime);
+        yield return new WaitForSeconds(_delayTime);
         TurnManager.Instance.MarkActionComplete();
     }
     private void Awake()

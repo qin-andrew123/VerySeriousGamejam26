@@ -215,7 +215,7 @@ public class TurnManager : MonoBehaviour
         {
             _currentTurn = (TurnOrder)i;
             yield return StartCoroutine(UpdateTurnInternal((TurnOrder)i));
-            BoardManager.Instance.RotateBoard();
+            // BoardManager.Instance.RotateBoard(); // NOTE AQIN: Removing this for now bc game feels too fast
         }
 
         AdvanceRoundState(); // End
