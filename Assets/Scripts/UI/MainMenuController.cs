@@ -10,7 +10,6 @@ using UnityEngine.UIElements;
 
 /* TODO BRIEZ:
  * Progress bar while loading level
- * Leaderboard population
  */
 
 #region Leaderboard data
@@ -48,7 +47,7 @@ public class MainMenuController : MonoBehaviour
     private Button _newGameButton;
     private Button _settingsButton;
     private Button _exitButton;
-    private ListView _leaderboardView;
+    private ScrollView _leaderboardView;
 
     #region Initialization
     private void OnEnable()
@@ -64,7 +63,7 @@ public class MainMenuController : MonoBehaviour
         _newGameButton = _uiDocument.rootVisualElement.Q("NewGame") as Button;
         _settingsButton = _uiDocument.rootVisualElement.Q("Settings") as Button;
         _exitButton = _uiDocument.rootVisualElement.Q("Exit") as Button;
-        _leaderboardView = _uiDocument.rootVisualElement.Q("Leaderboard") as ListView;
+        _leaderboardView = _uiDocument.rootVisualElement.Q("Leaderboard") as ScrollView;
 
         SubscribeButtons();
 
@@ -99,16 +98,26 @@ public class MainMenuController : MonoBehaviour
     }
 
 
-    // TODO BRIEZ: Remove later
+    // TODO BRIEZ: Test data for leaderboard! Remove later
     private void CreateTestLeaderboardData()
     {
         // Fake data
         LeaderboardEntry entry1 = new("Joe", 5);
         LeaderboardEntry entry2 = new("Harriet", 25);
+        LeaderboardEntry entry3 = new("Leroy", 18);
+        LeaderboardEntry entry4 = new("Credence", 24);
+        LeaderboardEntry entry5 = new("Grenouille", 24);
+        LeaderboardEntry entry6 = new("Minerva", 1);
+        LeaderboardEntry entry7 = new("Wilhelm", -18);
 
         LeaderboardData data = new();
         data.Entries.Add(entry1);
         data.Entries.Add(entry2);
+        data.Entries.Add(entry3);
+        data.Entries.Add(entry4);
+        data.Entries.Add(entry5);
+        data.Entries.Add(entry6);
+        data.Entries.Add(entry7);
 
         string serializedData = JsonUtility.ToJson(data);
 
@@ -134,41 +143,45 @@ public class MainMenuController : MonoBehaviour
             return;
         }
         
-        // Deserialize
+        // Deserialize and order by score
         string leaderboardJson = PlayerPrefs.GetString("Leaderboard", string.Empty);
         leaderboardData = JsonUtility.FromJson<LeaderboardData>(leaderboardJson);
-        foreach (LeaderboardEntry entry in leaderboardData.Entries)
-        {
-            Debug.Log($"ENTRY Player: {entry.PlayerName} Score: {entry.Score}");
-        }
+        leaderboardData.Entries =
+            leaderboardData.Entries.OrderByDescending(entry => entry.Score).ToList();
 
-        // Set up ListView
-        _leaderboardView.itemsSource = leaderboardData.Entries;
-        _leaderboardView.minimumHeight = 300;
-        //_leaderboardView.fixedItemHeight = 30.0f;
-
-        // Define creation and binding for items
-        _leaderboardView.makeItem = () =>
+        // Populate
+        /*
+         * Note/todo briez: Is this the ideal way to make a leaderboard? Of course not.
+         * But ListView is acting up and we're on a bit of a schedule.
+         * Feel free to optimise if the chance arises, lord knows this code
+         * will almost certainly never see the light of day again.
+         */
+        int leaderboardDataCount = leaderboardData.Entries.Count;
+        int visualElementIndex = 0;
+        foreach (VisualElement entry in _leaderboardView.Children())
         {
-            return new Label();
-        };
-        _leaderboardView.bindItem = (VisualElement element, int index) =>
-        {
-            Label label = element as Label ?? element.Q<Label>();
-
-            if (label != null &&
-                index < leaderboardData.Entries.Count)
+            // Hide extra entries if not enough leaderboard data
+            if (visualElementIndex > leaderboardDataCount - 1)
             {
-                LeaderboardEntry entry = leaderboardData.Entries[index];
-                label.text = $"{entry.PlayerName} — {entry.Score}";
-                label.style.fontSize = 30;
-                label.style.height = 50;
-                label.style.paddingBottom = 20;
+                entry.style.display = DisplayStyle.None;
+                continue;
             }
-        };
 
-        _leaderboardView.RefreshItems();
-        //_leaderboardView.Rebuild();
+            // Find text labels
+            Label playerNameLabel = entry.Q("PlayerName") as Label;
+            Label scoreLabel = entry.Q("Score") as Label;
+            if (playerNameLabel == null || scoreLabel == null)
+            {
+                Debug.LogError($"Missing labels for leaderboard entry {entry.name!}");
+                continue;
+            }
+
+            // Display values
+            playerNameLabel.text = leaderboardData.Entries[visualElementIndex].PlayerName;
+            scoreLabel.text = $"{leaderboardData.Entries[visualElementIndex].Score}";
+
+            ++visualElementIndex;
+        }
     }
     #endregion
 

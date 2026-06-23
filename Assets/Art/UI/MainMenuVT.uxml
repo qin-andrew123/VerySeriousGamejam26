@@ -4,7 +4,48 @@
         <ui:Label text="I&apos;m SOOOO hungry:(" name="Title" class="title" style="position: absolute; top: 150px;"/>
         <ui:Button text="New Game" name="NewGame" class="button" style="position: absolute; top: 300px;"/>
         <ui:Button text="Settings" name="Settings" class="button" style="top: 400px;"/>
-        <ui:ListView name="Leaderboard" selection-type="None" style="position: absolute; top: 550px; align-self: center; width: 800px; background-color: rgb(177, 179, 195); height: 300px; overflow: visible; min-height: 300px;"/>
         <ui:Button text="Exit" name="Exit" class="button" style="top: auto; bottom: 75px;"/>
+        <ui:ScrollView name="Leaderboard" style="position: absolute; top: 525px; align-self: center; width: 800px; height: 350px; background-color: rgb(174, 212, 255);">
+            <ui:VisualElement name="Entry0" class="leaderboardEntry">
+                <ui:Label text="[PlayerName]" name="PlayerName"/>
+                <ui:Label text="[Score]" name="Score"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Entry1" class="leaderboardEntry">
+                <ui:Label text="[PlayerName]" name="PlayerName"/>
+                <ui:Label text="[Score]" name="Score"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Entry2" class="leaderboardEntry">
+                <ui:Label text="[PlayerName]" name="PlayerName"/>
+                <ui:Label text="[Score]" name="Score"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Entry3" class="leaderboardEntry">
+                <ui:Label text="[PlayerName]" name="PlayerName"/>
+                <ui:Label text="[Score]" name="Score"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Entry4" class="leaderboardEntry">
+                <ui:Label text="[PlayerName]" name="PlayerName"/>
+                <ui:Label text="[Score]" name="Score"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Entry5" class="leaderboardEntry">
+                <ui:Label text="[PlayerName]" name="PlayerName"/>
+                <ui:Label text="[Score]" name="Score"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Entry6" class="leaderboardEntry">
+                <ui:Label text="[PlayerName]" name="PlayerName"/>
+                <ui:Label text="[Score]" name="Score"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Entry7" class="leaderboardEntry">
+                <ui:Label text="[PlayerName]" name="PlayerName"/>
+                <ui:Label text="[Score]" name="Score"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Entry8" class="leaderboardEntry">
+                <ui:Label text="[PlayerName]" name="PlayerName"/>
+                <ui:Label text="[Score]" name="Score"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Entry9" class="leaderboardEntry">
+                <ui:Label text="[PlayerName]" name="PlayerName"/>
+                <ui:Label text="[Score]" name="Score"/>
+            </ui:VisualElement>
+        </ui:ScrollView>
     </ui:VisualElement>
 </ui:UXML>
