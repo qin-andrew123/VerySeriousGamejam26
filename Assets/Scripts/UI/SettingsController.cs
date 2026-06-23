@@ -151,6 +151,8 @@ public class SettingsController : MonoBehaviour
         PlayerPrefs.SetInt("SfxVolume", _sfxVolumeSlider.value);
         _lastSavedSettings.SfxVolume = _sfxVolumeSlider.value;
         Debug.Log($"Set SfxVolume to {_sfxVolumeSlider.value}%");
+
+        PlayerPrefs.Save();
     }
 
     private void RollbackLastSavePoint()
