@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 292215414}
   - component: {fileID: 292215416}
   m_Layer: 0
-  m_Name: Orange
+  m_Name: NPC5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -237,7 +237,7 @@ GameObject:
   - component: {fileID: 416398493}
   - component: {fileID: 416398495}
   m_Layer: 0
-  m_Name: Green
+  m_Name: NPC2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -450,7 +450,7 @@ GameObject:
   - component: {fileID: 729409188}
   - component: {fileID: 729409190}
   m_Layer: 0
-  m_Name: Blue
+  m_Name: NPC3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -630,16 +630,16 @@ Transform:
   m_GameObject: {fileID: 970129587}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.2, z: 0}
+  m_LocalPosition: {x: 0.02, y: -0.13, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1877732947}
   - {fileID: 975896146}
   - {fileID: 600354661}
   - {fileID: 653108887}
   - {fileID: 1245730103}
   - {fileID: 2103388975}
+  - {fileID: 1877732947}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &970129590
@@ -672,11 +672,11 @@ MonoBehaviour:
   - {fileID: 292215415}
   _foodSpawnPoint:
   - {fileID: 975896146}
-  - {fileID: 1877732947}
   - {fileID: 600354661}
   - {fileID: 653108887}
   - {fileID: 1245730103}
   - {fileID: 2103388975}
+  - {fileID: 1877732947}
   _obtainDistance: 1.5
 --- !u!1 &975896145
 GameObject:
@@ -721,7 +721,7 @@ GameObject:
   - component: {fileID: 1066903606}
   - component: {fileID: 1066903608}
   m_Layer: 0
-  m_Name: Purple
+  m_Name: NPC4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1118,7 +1118,7 @@ GameObject:
   - component: {fileID: 1596941442}
   - component: {fileID: 1596941444}
   m_Layer: 0
-  m_Name: Red
+  m_Name: NPC1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -35,6 +35,7 @@ public class BoardManager : MonoBehaviour
     [Tooltip("How close the item must be to goal to be considered as obtained")]
     private float _obtainDistance = 1.5f;
     private List<GoalItem> _currentlyAvailableItems = new List<GoalItem>();
+    private HashSet<GameObject> _setCurrentlyActivePrefabs = new HashSet<GameObject>();
     private List<BoardNode> _boardPoints = new List<BoardNode>();
     private bool _isPlayerConstraintSatisfied = false;
 
@@ -59,7 +60,6 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < _currentlyAvailableItems.Count; ++i)
         {
             Vector3 predicted = CalculateItemLocation(gameObject.transform, _currentlyAvailableItems[i].transform, endRot); ;
-            Debug.Log($"Simulated Board Rotation Result {predicted}");
             result.Add(predicted);
         }
 
@@ -71,16 +71,29 @@ public class BoardManager : MonoBehaviour
     {
         while (_numActiveItems < _numMaxActiveItems)
         {
-            int randomItemIndex = Random.Range(0, _itemSpawnPrefabs.Count);
+            int randomPrefabIndex = Random.Range(0, _itemSpawnPrefabs.Count);
+            List<GameObject> possibleItems = new List<GameObject>();
+            for (int i = 0; i < _itemSpawnPrefabs.Count; ++i)
+            {
+                possibleItems.Add(_itemSpawnPrefabs[i]);
+            }
 
-            GameObject go = Instantiate(_itemSpawnPrefabs[randomItemIndex]);
+            foreach(GameObject iter in _setCurrentlyActivePrefabs)
+            {
+                possibleItems.Remove(iter);
+            }
+
+            int randomItemIndex = Random.Range(0, possibleItems.Count);
+
+            GameObject go = Instantiate(possibleItems[randomItemIndex]);
             GoalItem prefabGoalItem = go.GetComponent<GoalItem>();
+            prefabGoalItem.PrefabID = possibleItems[randomItemIndex];
             Assert.IsNotNull(prefabGoalItem);
             _currentlyAvailableItems.Add(prefabGoalItem);
+            _setCurrentlyActivePrefabs.Add(possibleItems[randomItemIndex]);
 
             GenerateConstraintsForItem(prefabGoalItem);
             DetermineSpawnPointForItem(prefabGoalItem);
-
             prefabGoalItem.ToDebugString(_numActiveItems);
             ++_numActiveItems;
         }
@@ -162,13 +175,19 @@ public class BoardManager : MonoBehaviour
                 ++_actorScores[closestIndex];
                 elementsToRemove.Add(item);
                 Destroy(item.gameObject);
-                if (bestAsTurn != TurnOrder.TURN_ORDER_PLAYER)
-                {
-                    --_currentLives;
-                }
                 if (containsPlayerConstraint)
                 {
                     _isPlayerConstraintSatisfied = false;
+                    if (bestAsTurn != TurnOrder.TURN_ORDER_PLAYER)
+                    {
+                        --_currentLives;
+
+                        if (_currentLives <= 0)
+                        {
+                            Debug.Log("Game has ended!");
+                            TurnManager.Instance.IsGameOver = true;
+                        }
+                    }
                 }
                 --_numActiveItems;
             }
@@ -177,14 +196,20 @@ public class BoardManager : MonoBehaviour
         foreach (GoalItem i in elementsToRemove)
         {
             _currentlyAvailableItems.Remove(i);
+            _setCurrentlyActivePrefabs.Remove(i.PrefabID);
         }
     }
 
     private void DetermineSpawnPointForItem(GoalItem item)
     {
+        Dictionary<TurnOrder, Vector3> satisfyingPositions = new Dictionary<TurnOrder, Vector3>();
         List<BoardNode> possibleIndicies = new List<BoardNode>();
         foreach(BoardNode node in _boardPoints)
         {
+            if (item.SatisfyingActors.Contains(node.AssociatedActor))
+            {
+                satisfyingPositions.Add(node.AssociatedActor, node.SpawnPoint.position);
+            }
             possibleIndicies.Add(node);
         }
         
@@ -206,7 +231,6 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        Dictionary<TurnOrder, Vector3> satisfyingPositions = new Dictionary<TurnOrder, Vector3>();
         // Cannot spawn on locations that match our constraints
         foreach (var turn in item.SatisfyingActors)
         {
@@ -216,7 +240,6 @@ public class BoardManager : MonoBehaviour
                 {
                     if (possibleIndicies[i].AssociatedActor == turn)
                     {
-                        satisfyingPositions.Add(turn, possibleIndicies[i].SpawnPoint.position);
                         possibleIndicies[i] = null;
                     }
                 }
@@ -236,25 +259,25 @@ public class BoardManager : MonoBehaviour
         List<float> weights = new List<float>();
         float totalWeight = 0.0f;
 
-        // for each satisfying actor, there is an associated weight that is based on distance from actor
-        foreach (TurnOrder turn in item.SatisfyingActors)
+        // Calculate distance from a valid starting loc to each spawn point (summed)
+        for (int i = 0; i < validStartingLocations.Count; ++i)
         {
-            Vector3 satisfyingSpawnPointPosition;
-            if (!satisfyingPositions.TryGetValue(turn, out satisfyingSpawnPointPosition))
-            {
-                Assert.IsTrue(false, $"Failed to lookup satisfying constraint {turn}");
-            }
-
             float calculatedWeight = 0.0f;
-            for (int i = 0; i < validStartingLocations.Count; ++i)
+            Vector3 spawnPointPosition = validStartingLocations[i].SpawnPoint.position;
+
+            foreach (TurnOrder turn in item.SatisfyingActors)
             {
                 Assert.IsTrue(validStartingLocations[i].AssociatedActor != turn, "There is a valid location that is equal to a constraint. this shouldn't be possible");
-                Vector3 spawnPointPosition = validStartingLocations[i].SpawnPoint.position;
 
-                weights.Add(calculatedWeight);
+                Vector3 satisfyingSpawnPointPosition;
+                if (!satisfyingPositions.TryGetValue(turn, out satisfyingSpawnPointPosition))
+                {
+                    Assert.IsTrue(false, $"Failed to lookup satisfying constraint {turn}");
+                }
                 calculatedWeight += Vector3.SqrMagnitude(satisfyingSpawnPointPosition - spawnPointPosition);
             }
 
+            weights.Add(calculatedWeight);
             totalWeight += calculatedWeight;
         }
 
@@ -410,6 +433,8 @@ public class BoardManager : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
         m_isRotating = false;
         m_numRotations = 0;
+
+        CheckItemsForObtain();
     }
 
     private IEnumerator ActionCompleteDelay()

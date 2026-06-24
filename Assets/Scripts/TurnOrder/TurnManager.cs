@@ -207,6 +207,7 @@ public class TurnManager : MonoBehaviour
         Assert.IsTrue(_roundState == RoundState.ROUND_STATE_START);
         ++_numRounds;
 
+        BoardManager.Instance.InitializeBoard();
         OnRoundStartNotify?.Invoke(_numRounds);
         yield return new WaitUntil(() => RoundUIAnimationComplete);
         RoundUIAnimationComplete = false;
@@ -218,7 +219,6 @@ public class TurnManager : MonoBehaviour
             _currentTurn = (TurnOrder)i;
             yield return StartCoroutine(UpdateTurnInternal((TurnOrder)i));
 
-            BoardManager.Instance.CheckItemsForObtain();
             // TODO AQIN Yield here for until completion of the UI
             // BoardManager.Instance.RotateBoard(); // NOTE AQIN: Removing this for now bc game feels too fast
         }

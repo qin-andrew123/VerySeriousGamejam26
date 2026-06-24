@@ -6,7 +6,8 @@ public class GoalItem : MonoBehaviour
 {
     public HashSet<TurnOrder> SatisfyingActors => _satisfyingActors;
     public bool HoldsPlayerConstraint { get; private set; } = false;
-    public BoardNode ParentNode { get; private set; }
+    public GameObject PrefabID { get; set; } = null;
+    public BoardNode ParentNode => _parentNode;
 
     [SerializeField] private string _name;
     private HashSet<TurnOrder> _satisfyingActors = new HashSet<TurnOrder>();
