@@ -38,7 +38,6 @@ public class MainMenuController : MonoBehaviour
     // Inspector properties
     [SerializeField] private string FirstLevelName = "LevelOne";
     [SerializeField] private UIDocument SettingsDocument;
-    [SerializeField] private int MaxLeaderboardEntries = 15;
 
     // Main menu UI document
     private UIDocument _uiDocument;

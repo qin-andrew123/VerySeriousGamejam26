@@ -187,8 +187,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d744170f5088d4046801b97d0813ecdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
-  _firstLevelName: LevelOne
-  _settingsDocument: {fileID: 974427050}
+  FirstLevelName: LevelOne
+  SettingsDocument: {fileID: 974427050}
 --- !u!1 &560628536
 GameObject:
   m_ObjectHideFlags: 0
@@ -400,6 +400,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e822ee0aeb181426da08c408715d47fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SettingsController
+  DialogPrefab: {fileID: 7688666951501162859, guid: a84297de6074b460ca266ebb78ca1d6e, type: 3}
+  DefaultMusicVolume: 100
+  DefaultSfxVolume: 100
 --- !u!1 &1651966781
 GameObject:
   m_ObjectHideFlags: 0
