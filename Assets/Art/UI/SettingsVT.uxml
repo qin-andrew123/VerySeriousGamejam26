@@ -1,12 +1,16 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Art/UI/SettingsSS.uss?fileID=7433441132597879392&amp;guid=9f64e83e4b2aa4586b155728684f70fc&amp;type=3#SettingsSS"/>
-    <ui:VisualElement name="Overlay" style="flex-grow: 1; background-color: rgba(14, 14, 29, 0.765);"/>
-    <ui:VisualElement name="Page" style="position: absolute; top: 100px; align-self: center; width: 1200px; height: 800px; background-color: rgb(77, 77, 77); padding-top: 30px; padding-right: 30px; padding-bottom: 30px; padding-left: 30px;">
-        <ui:Label text="Settings" name="Title" style="font-size: 50px; -unity-text-align: upper-center; color: rgb(255, 255, 255); -unity-font-style: bold; margin-bottom: 50px;"/>
+    <ui:VisualElement name="Overlay" style="flex-grow: 1; background-color: rgba(14, 14, 29, 0.765); flex-direction: row; justify-content: space-between; align-items: auto;"/>
+    <ui:VisualElement name="Utensils" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; flex-direction: row; justify-content: space-between; align-items: center;">
+        <ui:VisualElement name="Knife" class="utensil" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Art/UI/plate.png?fileID=-1075735326616136986&amp;guid=4172465f9cc3e4043967285a93971b6b&amp;type=3#plate_2&quot;); position: absolute; width: 125px; height: 800px; align-items: flex-end; right: 150px;"/>
+        <ui:VisualElement name="Fork" class="utensil" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Art/UI/plate.png?fileID=-4795573259988461060&amp;guid=4172465f9cc3e4043967285a93971b6b&amp;type=3#plate_0&quot;); width: 125px; position: absolute; height: 800px; left: 150px;"/>
+    </ui:VisualElement>
+    <ui:VisualElement name="Page" style="position: absolute; top: 100px; align-self: center; width: 1200px; height: 800px; background-color: rgb(77, 77, 77); padding-top: 130px; padding-right: 200px; padding-bottom: 150px; padding-left: 200px; background-image: url(&quot;project://database/Assets/Art/UI/plate.png?fileID=330159055237114263&amp;guid=4172465f9cc3e4043967285a93971b6b&amp;type=3#plate_1&quot;);">
+        <ui:Label text="Settings" name="Title" style="font-size: 50px; -unity-text-align: upper-center; color: rgb(0, 0, 0); -unity-font-style: bold; margin-bottom: 50px;"/>
         <ui:SliderInt label="Music" value="100" high-value="100" name="MusicVolume" fill="true" class="slider"/>
         <ui:SliderInt label="SFX" value="100" high-value="100" name="SfxVolume" fill="true" class="slider"/>
         <ui:VisualElement name="ButtonBar" style="flex-grow: 1; align-self: flex-start; flex-direction: row; align-items: flex-end;">
-            <ui:Button text="Back" name="Back" class="button" style="align-items: flex-start; margin-right: 350px;"/>
+            <ui:Button text="Back" name="Back" class="button" style="align-items: flex-start; margin-right: 110px;"/>
             <ui:Button text="Reset to defaults" name="ResetToDefaults" class="button"/>
             <ui:Button text="Save" name="Save" class="button"/>
         </ui:VisualElement>
