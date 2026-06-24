@@ -45,7 +45,9 @@ public class TurnManager : MonoBehaviour
     public TurnOrder CurrentTurn => _currentTurn;
     public int NumRounds => _numRounds;
     public bool IsPaused { get; set; } = false;
+    public bool IsRoundOver { get; set; } = false;
     public bool IsGameOver { get; set; } = false;
+
     public bool RoundUIAnimationComplete { get; set; } = false;
     public bool TurnUIAnimationComplete { get; set; } = false;
 
@@ -215,6 +217,9 @@ public class TurnManager : MonoBehaviour
         {
             _currentTurn = (TurnOrder)i;
             yield return StartCoroutine(UpdateTurnInternal((TurnOrder)i));
+
+            BoardManager.Instance.CheckItemsForObtain();
+            // TODO AQIN Yield here for until completion of the UI
             // BoardManager.Instance.RotateBoard(); // NOTE AQIN: Removing this for now bc game feels too fast
         }
 

@@ -341,7 +341,7 @@ GameObject:
   m_Component:
   - component: {fileID: 600354661}
   m_Layer: 0
-  m_Name: ItemPoint (2)
+  m_Name: NPC1Point
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -372,7 +372,7 @@ GameObject:
   m_Component:
   - component: {fileID: 653108887}
   m_Layer: 0
-  m_Name: ItemPoint (3)
+  m_Name: NPC2Point
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -635,6 +635,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1877732947}
+  - {fileID: 975896146}
   - {fileID: 600354661}
   - {fileID: 653108887}
   - {fileID: 1245730103}
@@ -657,21 +658,57 @@ MonoBehaviour:
   _angleOfRotation: 60
   _rotationDuration: 1
   _delayTime: 0.5
+  _numMaxActiveItems: 3
+  _itemSpawnPrefabs:
+  - {fileID: 9062750930964181278, guid: a7e62a26bee36a341bd80ce85db31099, type: 3}
+  - {fileID: 9062750930964181278, guid: 5b2a311df108cb840ad54c6fce1f28af, type: 3}
+  - {fileID: 9062750930964181278, guid: 586b7c8f0c4fdb749987fa5f521b58e4, type: 3}
+  _actorPositions:
+  - {fileID: 1576773971}
+  - {fileID: 1596941443}
+  - {fileID: 416398494}
+  - {fileID: 729409189}
+  - {fileID: 1066903607}
+  - {fileID: 292215415}
   _foodSpawnPoint:
+  - {fileID: 975896146}
   - {fileID: 1877732947}
   - {fileID: 600354661}
   - {fileID: 653108887}
   - {fileID: 1245730103}
   - {fileID: 2103388975}
-  _itemSpawnPrefabs:
-  - {fileID: 9062750930964181278, guid: a7e62a26bee36a341bd80ce85db31099, type: 3}
-  _actorPositions:
-  - {fileID: 1576773969}
-  - {fileID: 1596941441}
-  - {fileID: 416398492}
-  - {fileID: 729409187}
-  - {fileID: 1066903605}
-  - {fileID: 292215413}
+  _obtainDistance: 1.5
+--- !u!1 &975896145
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 975896146}
+  m_Layer: 0
+  m_Name: PlayerPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &975896146
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 975896145}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.12, y: 1.91, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 970129589}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1066903605
 GameObject:
   m_ObjectHideFlags: 0
@@ -925,7 +962,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1245730103}
   m_Layer: 0
-  m_Name: ItemPoint (4)
+  m_Name: NPC3Point
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -1308,7 +1345,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1877732947}
   m_Layer: 0
-  m_Name: ItemPoint
+  m_Name: NPC5Point
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -1339,7 +1376,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2103388975}
   m_Layer: 0
-  m_Name: ItemPoint (5)
+  m_Name: NPC4Point
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4161915157994761454}
   - component: {fileID: 3029415331042828208}
   m_Layer: 0
-  m_Name: TestItem
+  m_Name: TestItem_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: -712631045867808456, guid: b670ab75dde984907b8570040daa08c5, type: 3}
-  m_Color: {r: 0, g: 1, b: 0.97232765, a: 1}
+  m_Color: {r: 1, g: 0.22008047, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -104,4 +104,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90f26c7b3fd4eca46a3ece78c7f6f79e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoalItem
-  _name: TestItem1
+  _name: TestItem_1
