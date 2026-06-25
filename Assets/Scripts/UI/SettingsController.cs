@@ -22,7 +22,7 @@ using UnityEngine.UIElements;
  * => Frankly gets repetitive as-is. Not high priority. Just thinking.
  */
 
-public enum DialogResult
+public enum DIALOG_RESULT
 {
     None = -1,
     Waiting,
@@ -59,7 +59,7 @@ public class SettingsController : MonoBehaviour
     // Last saved values — used to check for unsaved changes
     private Settings _lastSavedSettings;
 
-    private DialogResult _dialogResult = DialogResult.None;
+    private DIALOG_RESULT _dialogResult = DIALOG_RESULT.None;
 
     #region Initialization
     private void OnEnable()
@@ -207,7 +207,7 @@ public class SettingsController : MonoBehaviour
         string titleText, string bodyText, Action okCallback)
     {
         // Check for already-active dialogs
-        if (_dialogResult != DialogResult.None)
+        if (_dialogResult != DIALOG_RESULT.None)
         {
             Debug.Log($"Another waiting dialog is already open!");
             yield return null;
@@ -221,17 +221,17 @@ public class SettingsController : MonoBehaviour
         }
 
         // Wait for user response
-        _dialogResult = DialogResult.Waiting;
-        yield return new WaitUntil(() => _dialogResult != DialogResult.Waiting);
+        _dialogResult = DIALOG_RESULT.Waiting;
+        yield return new WaitUntil(() => _dialogResult != DIALOG_RESULT.Waiting);
 
         // Execute callback if user elected to continue
-        if (_dialogResult == DialogResult.OK)
+        if (_dialogResult == DIALOG_RESULT.OK)
         {
             okCallback();
         }
 
         CleanUpDialog(dialogInstance);
-        _dialogResult = DialogResult.None;
+        _dialogResult = DIALOG_RESULT.None;
     }
 
     private GameObject InstantiateDialog(string titleText, string bodyText)
@@ -295,13 +295,13 @@ public class SettingsController : MonoBehaviour
     private void OnDialogCancel()
     {
         Debug.Log("User selected dialog option: Cancel");
-        _dialogResult = DialogResult.Cancel;
+        _dialogResult = DIALOG_RESULT.Cancel;
     }
 
     private void OnDialogOk()
     {
         Debug.Log("User selected dialog option: OK");
-        _dialogResult = DialogResult.OK;
+        _dialogResult = DIALOG_RESULT.OK;
     }
     #endregion
 }
