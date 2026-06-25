@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEditor;
 using UnityEngine;
@@ -21,6 +22,14 @@ using UnityEngine.UIElements;
  * => Frankly gets repetitive as-is. Not high priority. Just thinking.
  */
 
+public enum DialogResult
+{
+    None = -1,
+    Waiting,
+    OK,
+    Cancel
+}
+
 public struct Settings
 {
     public int MusicVolume { get; set; }
@@ -29,6 +38,8 @@ public struct Settings
 
 public class SettingsController : MonoBehaviour
 {
+    [SerializeField] private GameObject DialogPrefab;
+
     // Settings UI document
     private UIDocument _uiDocument;
 
@@ -47,6 +58,8 @@ public class SettingsController : MonoBehaviour
 
     // Last saved values — used to check for unsaved changes
     private Settings _lastSavedSettings;
+
+    private DialogResult _dialogResult = DialogResult.None;
 
     #region Initialization
     private void OnEnable()
@@ -115,27 +128,47 @@ public class SettingsController : MonoBehaviour
     #region Button events
     private void OnClickBack()
     {
+        Action backAction = () => {
+            Debug.Log("Executing Back callback");
+
+            // Discard any unsaved changes
+            RollbackLastSavePoint();
+
+            // Hide settings page
+            _uiDocument.rootVisualElement.style.display = DisplayStyle.None;
+        };
+
         if (HasUnsavedChanges())
         {
-            Debug.Log("Yoink! Say bye-bye to your changes i guess");
+            StartCoroutine(RaiseDialogAndWait(
+                titleText: "Exit without saving?",
+                bodyText: "You have unsaved changes to Settings that will be lost!",
+                okCallback: backAction));
         }
-
-        // Discard any unsaved changes
-        RollbackLastSavePoint();
-
-        // Hide settings page
-        _uiDocument.rootVisualElement.style.display = DisplayStyle.None;
+        else
+        {
+            backAction();
+        }
     }
 
     private void OnClickResetToDefaults()
     {
-        if (_musicVolumeSlider != null)
-            _musicVolumeSlider.SetValueWithoutNotify(DefaultMusicVolume);
+        StartCoroutine(RaiseDialogAndWait(
+            titleText: "Reset settings?",
+            bodyText: "All customised settings will be lost!",
+            okCallback: () => {
+                Debug.Log("Executing ResetToDefaults callback");
 
-        if (_sfxVolumeSlider != null)
-            _sfxVolumeSlider.SetValueWithoutNotify(DefaultSfxVolume);
+                // Reset volume sliders
+                if (_musicVolumeSlider != null)
+                    _musicVolumeSlider.SetValueWithoutNotify(DefaultMusicVolume);
 
-        SetSavePoint(raiseSaveFlag: false);
+                if (_sfxVolumeSlider != null)
+                    _sfxVolumeSlider.SetValueWithoutNotify(DefaultSfxVolume);
+
+                // Save as defaults
+                SetSavePoint(raiseSaveFlag: false);
+            }));
     }
 
     private void OnClickSave() => SetSavePoint();
@@ -151,6 +184,8 @@ public class SettingsController : MonoBehaviour
         PlayerPrefs.SetInt("SfxVolume", _sfxVolumeSlider.value);
         _lastSavedSettings.SfxVolume = _sfxVolumeSlider.value;
         Debug.Log($"Set SfxVolume to {_sfxVolumeSlider.value}%");
+
+        PlayerPrefs.Save();
     }
 
     private void RollbackLastSavePoint()
@@ -165,5 +200,108 @@ public class SettingsController : MonoBehaviour
     private bool HasUnsavedChanges() =>
         _lastSavedSettings.MusicVolume != _musicVolumeSlider.value ||
         _lastSavedSettings.SfxVolume != _sfxVolumeSlider.value;
+    #endregion
+
+    #region Warning Dialog
+    private IEnumerator RaiseDialogAndWait(
+        string titleText, string bodyText, Action okCallback)
+    {
+        // Check for already-active dialogs
+        if (_dialogResult != DialogResult.None)
+        {
+            Debug.Log($"Another waiting dialog is already open!");
+            yield return null;
+        }
+
+        GameObject dialogInstance = InstantiateDialog(titleText, bodyText);
+        if (dialogInstance == null)
+        {
+            Debug.LogError($"Failed to instantiate dialog!");
+            yield return null;
+        }
+
+        // Wait for user response
+        _dialogResult = DialogResult.Waiting;
+        yield return new WaitUntil(() => _dialogResult != DialogResult.Waiting);
+
+        // Execute callback if user elected to continue
+        if (_dialogResult == DialogResult.OK)
+        {
+            okCallback();
+        }
+
+        CleanUpDialog(dialogInstance);
+        _dialogResult = DialogResult.None;
+    }
+
+    private GameObject InstantiateDialog(string titleText, string bodyText)
+    {
+        // Create dialog GameObject
+        if (DialogPrefab == null)
+            return null;
+
+        GameObject dialogInstance = Instantiate(DialogPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+        if (dialogInstance == null)
+            return null;
+
+        // Get visual tree
+        UIDocument dialogDocument = dialogInstance.GetComponent<UIDocument>();
+        if (dialogDocument == null)
+            return null;
+
+        // Set text fields
+        Label titleField = dialogDocument.rootVisualElement.Q("Title") as Label;
+        Label bodyField = dialogDocument.rootVisualElement.Q("Body") as Label;
+
+        if (titleField != null)
+            titleField.text = titleText;
+        if (bodyField != null)
+            bodyField.text = bodyText;
+
+        // Listen to buttons
+        Button dialogCancelButton = dialogDocument.rootVisualElement.Q("Cancel") as Button;
+        Button dialogOkButton = dialogDocument.rootVisualElement.Q("OK") as Button;
+
+        if (dialogCancelButton != null)
+            dialogCancelButton.clicked += OnDialogCancel;
+        if (dialogOkButton != null)
+            dialogOkButton.clicked += OnDialogOk;
+
+        return dialogInstance;
+    }
+
+    private void CleanUpDialog(GameObject dialogInstance)
+    {
+        if (dialogInstance == null)
+            return;
+
+        UIDocument dialogDocument = dialogInstance.GetComponent<UIDocument>();
+        if (dialogDocument != null)
+        {
+            // Unsubscribe from buttons
+            Button dialogCancelButton = dialogDocument.rootVisualElement.Q("Cancel") as Button;
+            Button dialogOkButton = dialogDocument.rootVisualElement.Q("OK") as Button;
+
+            if (dialogCancelButton != null)
+                dialogCancelButton.clicked -= OnDialogCancel;
+            if (dialogOkButton != null)
+                dialogOkButton.clicked -= OnDialogOk;
+        }
+
+        // BEGONE BACK TO THE DARKNESS
+        Destroy(dialogInstance);
+    }
+
+    private void OnDialogCancel()
+    {
+        Debug.Log("User selected dialog option: Cancel");
+        _dialogResult = DialogResult.Cancel;
+    }
+
+    private void OnDialogOk()
+    {
+        Debug.Log("User selected dialog option: OK");
+        _dialogResult = DialogResult.OK;
+    }
     #endregion
 }

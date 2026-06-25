@@ -1,0 +1,13 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/dialogSS.uss?fileID=7433441132597879392&amp;guid=5f9c33f0aeb1146909208ae6f52570a5&amp;type=3#dialogSS"/>
+    <ui:VisualElement name="Page" style="flex-grow: 1; width: 900px; height: 450px; align-self: center; background-color: rgba(255, 255, 255, 0); background-image: url(&quot;project://database/Assets/Art/UI/board.png?fileID=1763014460331064234&amp;guid=27097958ddd5d4bbbbe9d07dc4a3cbab&amp;type=3#board_0&quot;); padding-left: 205px; top: 250px; position: absolute; left: 450px;">
+        <ui:VisualElement name="UsableArea" style="flex-grow: 1; padding-top: 25px; padding-right: 25px; padding-bottom: 25px; padding-left: 25px; width: 665px;">
+            <ui:Label text="[Title text]" name="Title" enable-rich-text="true" style="font-size: 40px; -unity-font-style: bold; margin-bottom: 20px; color: rgb(87, 58, 36); white-space: normal;"/>
+            <ui:Label text="[Body text]" name="Body" style="font-size: 30px; justify-content: center; white-space: normal; color: rgb(87, 58, 37); -unity-font-style: normal;"/>
+            <ui:VisualElement name="ButtonBar" style="flex-grow: 1; flex-direction: row; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;">
+                <ui:Button text="OK" name="OK" class="button"/>
+                <ui:Button text="Cancel" name="Cancel" class="button"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
