@@ -6,11 +6,9 @@ public class AIManager : MonoBehaviour
     // In order of turn order
     [SerializeField] List<AIEvaluator> m_AIBehaviors;
 
-    // Returns true once a value is obtained
-    public ActionType EvaluateAction(TurnOrder AIType)
+    public ActionType EvaluateAction(TurnOrder turn)
     {
-        // TODO AQIN: IMPLEMENT
-        int properIndex = (int)AIType - (int)TurnOrder.TURN_ORDER_NPC1;
+        int properIndex = (int)turn - (int)TurnOrder.TURN_ORDER_NPC1;
         if (m_AIBehaviors[properIndex] == null)
         {
             Debug.LogError("AIEvaluator at index " + properIndex + " is null");
@@ -20,8 +18,20 @@ public class AIManager : MonoBehaviour
         return m_AIBehaviors[properIndex].GetAction();
     }
 
-    public void PerformAction(int AIType, ActionType actionType)
+    public void PerformAction(TurnOrder turn, ActionType actionType)
     {
-        // TODO AQIN: Implement
+        int properIndex = (int)turn - (int)TurnOrder.TURN_ORDER_NPC1;
+        if (m_AIBehaviors[properIndex] == null)
+        {
+            Debug.LogError("AIEvaluator at index " + properIndex + " is null");
+            return;
+        }
+
+        MoveType moveToPerform = m_AIBehaviors[properIndex].GetMoveType(actionType);
+        if (moveToPerform == MoveType.MOVE_TYPE_SKIP)
+        {
+            TurnManager.Instance.MarkNextTurnAsSkipped(turn);
+        }
+        BoardManager.Instance.PerformBoardMove(moveToPerform);
     }
 }

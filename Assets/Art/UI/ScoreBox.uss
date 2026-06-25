@@ -1,0 +1,18 @@
+:root {
+}
+
+.scorePanel {
+    color: rgb(0, 0, 0);
+    transition-property: translate, color;
+    transition-timing-function: ease-in-out, ease;
+    transition-duration: 0.5s, 0.2s;
+}
+
+.scorePanel--active {
+    translate: 10% 0;
+    color: rgb(0, 255, 7);
+    transition-property: translate, color;
+    transition-duration: 0.5s, 0.5s;
+    transition-timing-function: ease-in-out, ease;
+    transition-delay: 0s, 0s;
+}

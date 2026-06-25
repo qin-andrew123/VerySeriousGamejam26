@@ -11,3 +11,148 @@
 .notify--visible {
     opacity: 1;
 }
+
+.remotebutton {
+    background-color: rgb(255, 255, 255);
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    border-top-left-radius: 90px;
+    border-top-right-radius: 90px;
+    border-bottom-right-radius: 90px;
+    border-bottom-left-radius: 90px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
+}
+
+.remotebutton:hover {
+    transition-property: background-color;
+    background-color: rgb(30, 255, 0);
+}
+
+.remotebase {
+    transition-property: scale, translate;
+    transition-duration: 0.5s, 0.5s;
+    transition-timing-function: ease-in-out, ease-in-out;
+}
+
+.remotebase:hover {
+    transition-property: scale, translate;
+    transition-duration: 0.5s, 0.5s;
+    transition-timing-function: ease-in-out, ease-in-out;
+    scale: 2 2 2;
+    position: absolute;
+    right: 200px;
+    bottom: 200px;
+    translate: -80px -100px;
+}
+
+.remotebuttonActive {
+    background-color: rgb(255, 208, 0);
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    border-top-left-radius: 90px;
+    border-top-right-radius: 90px;
+    border-bottom-right-radius: 90px;
+    border-bottom-left-radius: 90px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
+}
+
+.remotebuttonActive:hover {
+    background-color: rgb(12, 255, 0);
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    border-top-left-radius: 90px;
+    border-top-right-radius: 90px;
+    border-bottom-right-radius: 90px;
+    border-bottom-left-radius: 90px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
+}
+
+.portrait {
+    border-top-width: 5px;
+    border-right-width: 5px;
+    border-bottom-width: 5px;
+    border-left-width: 5px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
+    border-left-color: rgb(0, 0, 0);
+    padding-top: 1px;
+    padding-right: 1px;
+    padding-bottom: 1px;
+    padding-left: 1px;
+    min-width: 80px;
+    min-height: 80px;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in-out;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.portrait--active {
+    transition-property: scale;
+    scale: 1.5 1.5 1.5;
+    border-left-color: rgb(255, 0, 0);
+    border-right-color: rgb(255, 0, 0);
+    border-top-color: rgb(255, 0, 0);
+    border-bottom-color: rgb(255, 0, 0);
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+.scorePanel {
+    translate: -450px 0;
+    transform-origin: center;
+    transition-property: translate;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.25s;
+    align-self: flex-start;
+    align-content: auto;
+    position: absolute;
+    bottom: 15%;
+    left: 30px;
+    flex-direction: column;
+    justify-content: space-evenly;
+    top: 15%;
+    overflow: visible;
+    flex-wrap: nowrap;
+}
+
+.scorePanel--active {
+    translate: 500px 0;
+    transform-origin: center;
+    transition-property: translate;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.25s;
+}
+
+
+
+
