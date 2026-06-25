@@ -10,6 +10,9 @@ public class BoardManager : MonoBehaviour
 {
     public static BoardManager Instance { get; private set; }
     public bool TurningClockwise { get; private set; } = true;
+    public bool IsBoardRotating => m_isRotating;
+    // UI Information
+    [SerializeField] private GameplayUIControl _gameplayControl;
 
     // Player Fields. Gameplay Information
     [SerializeField] private int _startingLives = 3;
@@ -20,7 +23,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField] private float _angleOfRotation = 60.0f;
     [SerializeField] private float _rotationDuration = 1.0f;
     [SerializeField] private float _delayTime = 0.5f;
-    private int m_numRotations = 0;
+    private int m_numRotations = 1;
     private bool m_isRotating = false;
 
     // Item Fields. Spawning and logicstics
@@ -173,6 +176,8 @@ public class BoardManager : MonoBehaviour
 
                 // TODO AQIN: UI Here to describe success or loss
                 ++_actorScores[closestIndex];
+                _gameplayControl.UpdateScoreForActor(closestIndex, _actorScores[closestIndex]);
+                
                 elementsToRemove.Add(item);
                 Destroy(item.gameObject);
                 if (containsPlayerConstraint)
@@ -432,7 +437,7 @@ public class BoardManager : MonoBehaviour
         transform.rotation = endRot;
         yield return new WaitForSeconds(0.3f);
         m_isRotating = false;
-        m_numRotations = 0;
+        m_numRotations = 1;
 
         CheckItemsForObtain();
     }

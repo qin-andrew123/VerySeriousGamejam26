@@ -1,0 +1,7 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Art/UI/ScoreBox.uss?fileID=7433441132597879392&amp;guid=be11160ba4e6097488e41d82a93e8b23&amp;type=3#ScoreBox"/>
+    <ui:VisualElement name="Root" class="scorePanel" style="flex-grow: 1; flex-direction: row; align-items: stretch; justify-content: flex-start; align-content: auto; align-self: auto; flex-wrap: nowrap; width: 250px; height: 100px;">
+        <ui:Image source="project://database/Resources/unity_builtin_extra?fileID=10904&amp;guid=0000000000000000f000000000000000&amp;type=0#UISprite" name="Portrait" style="justify-content: flex-end; align-self: auto; min-width: 30%; min-height: 100%; align-content: auto; align-items: auto;"/>
+        <ui:Label text="NAME: SCORE " name="Score" style="align-self: stretch; min-width: 70%; min-height: 100%; font-size: 25px; -unity-text-align: middle-left; text-overflow: clip; white-space: pre; -unity-text-generator: standard; -unity-text-auto-size: none; flex-wrap: nowrap; flex-direction: row;"/>
+    </ui:VisualElement>
+</ui:UXML>

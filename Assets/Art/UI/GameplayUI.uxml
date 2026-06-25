@@ -1,9 +1,17 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="ScoreBox" src="project://database/Assets/Art/UI/ScoreBox.uxml?fileID=9197481963319205126&amp;guid=384f7c207543bf045a193fbfcd9aa2b3&amp;type=3#ScoreBox"/>
     <Style src="project://database/Assets/Art/UI/GameplayUI.uss?fileID=7433441132597879392&amp;guid=8f1a786096a6a6c4b8d652da8edc9eb1&amp;type=3#GameplayUI"/>
     <ui:VisualElement name="GameplayRoot" style="flex-grow: 1;">
-        <ui:VisualElement name="TurnRoot" style="flex-grow: 1; align-self: stretch; justify-content: space-between; align-items: flex-start; flex-direction: row; max-height: 100px; min-height: 50px; min-width: 100%; max-width: 100%;">
-            <ui:Label text="Current Round: 1" name="RoundNum" class="notify" style="font-size: 50px;"/>
-            <ui:Label text="Current Turn: 1" name="CurrentTurn" class="notify" style="font-size: 50px;"/>
+        <ui:VisualElement name="TurnRoot" style="flex-grow: 1; align-self: center; justify-content: center; align-items: flex-start; flex-direction: row; max-height: 100%; min-height: 50px; min-width: 100%; max-width: 100%; align-content: center; translate: 30px 0;">
+            <ui:Label text="Current Round: 1" name="RoundNum" class="notify" style="font-size: 100px; align-self: center; justify-content: center; position: absolute; background-size: 100% 100%; -unity-text-align: middle-center; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-left-radius: 45px; border-top-right-radius: 45px; border-bottom-right-radius: 45px; border-bottom-left-radius: 45px; border-top-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-left-color: rgb(0, 0, 0); background-color: rgb(222, 177, 218); min-width: 900px; max-width: 900px; max-height: 200px; min-height: 150px;"/>
+            <ui:VisualElement name="TurnContainer" style="flex-grow: 1; align-self: flex-start; align-items: center; flex-direction: row; justify-content: center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; top: 2%;">
+                <ui:Image name="PlayerPortrait" source="project://database/Resources/unity_builtin_extra?fileID=10904&amp;guid=0000000000000000f000000000000000&amp;type=0#UISprite" class="portrait"/>
+                <ui:Image name="NPC1Portrait" source="project://database/Resources/unity_builtin_extra?fileID=10904&amp;guid=0000000000000000f000000000000000&amp;type=0#UISprite" class="portrait"/>
+                <ui:Image name="NPC2Portrait" source="project://database/Resources/unity_builtin_extra?fileID=10904&amp;guid=0000000000000000f000000000000000&amp;type=0#UISprite" class="portrait"/>
+                <ui:Image name="NPC3Portrait" source="project://database/Resources/unity_builtin_extra?fileID=10904&amp;guid=0000000000000000f000000000000000&amp;type=0#UISprite" class="portrait"/>
+                <ui:Image name="NPC4Portrait" source="project://database/Resources/unity_builtin_extra?fileID=10904&amp;guid=0000000000000000f000000000000000&amp;type=0#UISprite" class="portrait"/>
+                <ui:Image name="NPC5Portrait" source="project://database/Resources/unity_builtin_extra?fileID=10904&amp;guid=0000000000000000f000000000000000&amp;type=0#UISprite" class="portrait"/>
+            </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="RemoteRoot" class="remotebase" style="flex-grow: 1; position: absolute; right: 50px; bottom: 50px; width: 125px; height: 250px;">
             <ui:Image name="RemoteBase" source="" scale-mode="ScaleToFit" style="min-width: 100%; min-height: 100%; justify-content: space-evenly; align-items: center; background-color: rgb(0, 65, 23);">
@@ -12,6 +20,14 @@
                 <ui:Button text="" icon-image="" name="ActionThree" tooltip="This one is Reverse" class="remotebutton" style="position: relative;"/>
                 <ui:Button text="" icon-image="" name="ActionFour" tooltip="This one is Chaos" class="remotebutton" style="position: relative;"/>
             </ui:Image>
+        </ui:VisualElement>
+        <ui:VisualElement name="ScoreRoot" class="scorePanel">
+            <ui:Instance template="ScoreBox" name="PlayerScore"/>
+            <ui:Instance template="ScoreBox" name="NPC1Score"/>
+            <ui:Instance template="ScoreBox" name="NPC2Score"/>
+            <ui:Instance template="ScoreBox" name="NPC3Score"/>
+            <ui:Instance template="ScoreBox" name="NPC4Score"/>
+            <ui:Instance template="ScoreBox" name="NPC5Score"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

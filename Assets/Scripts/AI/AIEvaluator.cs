@@ -24,7 +24,6 @@ public enum MoveType
 public class AIEvaluator : MonoBehaviour
 {
     [SerializeField] private TurnOrder m_AIType;
-    [SerializeField] private TurnOrder m_opponent = TurnOrder.TURN_ORDER_INVALID;
 
     public ActionType GetAction()
     {
@@ -55,12 +54,6 @@ public class AIEvaluator : MonoBehaviour
     private ActionType EvaluationNPC1()
     {
         ActionType bestAction = ActionType.ACTION_TYPE_DEFAULT;
-        float heuristic = 1.0f;
-
-        if (m_opponent == TurnOrder.TURN_ORDER_INVALID)
-        {
-            return ActionType.ACTION_TYPE_DEFAULT;
-        }
 
         // Check positions based on simulation Currently, there is only one but 
         List<Vector3> currentPositions = BoardManager.Instance.GetItemCurrentPositions();
@@ -92,7 +85,7 @@ public class AIEvaluator : MonoBehaviour
 
                 if (distSqrToPredicted >= distSqrToCurrent && Random.Range(0.0f, 1.0f) < 0.2f)
                 {
-                    bestAction = ActionType.ACTION_TYPE_PASS;
+                    bestAction = Random.Range(0f, 1f) < 0.2f ? ActionType.ACTION_TYPE_PASS : ActionType.ACTION_TYPE_FALLBACK;
                 }
             }
         }
@@ -121,12 +114,6 @@ public class AIEvaluator : MonoBehaviour
     private ActionType EvaluationNPC2()
     {
         ActionType bestAction = ActionType.ACTION_TYPE_DEFAULT;
-        float heuristic = 1.0f;
-
-        if (m_opponent == TurnOrder.TURN_ORDER_INVALID)
-        {
-            return ActionType.ACTION_TYPE_DEFAULT;
-        }
 
         // Check positions based on simulation Currently, there is only one but 
         List<Vector3> currentPositions = BoardManager.Instance.GetItemCurrentPositions();
@@ -158,7 +145,7 @@ public class AIEvaluator : MonoBehaviour
 
                 if (distSqrToPredicted >= distSqrToCurrent && Random.Range(0.0f, 1.0f) < 0.2f)
                 {
-                    bestAction = ActionType.ACTION_TYPE_PASS;
+                    bestAction = Random.Range(0f, 1f) < 0.2f ? ActionType.ACTION_TYPE_PASS : ActionType.ACTION_TYPE_FALLBACK;
                 }
             }
         }
@@ -180,16 +167,10 @@ public class AIEvaluator : MonoBehaviour
         return MoveType.MOVE_TYPE_PASS;
     }
 
-    // Default Action is Skip 30% chance | +1 Otherwise. Fallback is Reverse
+    // Default Action is Skip 15% chance | +1 Otherwise. Fallback is Reverse
     private ActionType EvaluationNPC3()
     {
         ActionType bestAction = ActionType.ACTION_TYPE_DEFAULT;
-        float heuristic = 1.0f;
-
-        if (m_opponent == TurnOrder.TURN_ORDER_INVALID)
-        {
-            return ActionType.ACTION_TYPE_DEFAULT;
-        }
 
         // Check positions based on simulation Currently, there is only one but 
         List<Vector3> currentPositions = BoardManager.Instance.GetItemCurrentPositions();
@@ -221,7 +202,7 @@ public class AIEvaluator : MonoBehaviour
 
                 if (distSqrToPredicted >= distSqrToCurrent && Random.Range(0.0f, 1.0f) < 0.2f)
                 {
-                    bestAction = ActionType.ACTION_TYPE_PASS;
+                    bestAction = Random.Range(0f, 1f) < 0.3 ? ActionType.ACTION_TYPE_PASS : ActionType.ACTION_TYPE_FALLBACK;
                 }
             }
         }
@@ -229,12 +210,12 @@ public class AIEvaluator : MonoBehaviour
         return bestAction;
     }
 
-    // Default Action is Skip 30% chance | +1 Otherwise. Fallback is Reverse
+    // Default Action is Skip 15% chance | +1 Otherwise. Fallback is Reverse
     private MoveType GetNPC3Move(ActionType actionType)
     {
         if (actionType == ActionType.ACTION_TYPE_DEFAULT)
         {
-            if (Random.Range(0f, 1f) <= 0.3f)
+            if (Random.Range(0f, 1f) <= 0.15f)
             {
                 return MoveType.MOVE_TYPE_SKIP;
             }
@@ -251,16 +232,10 @@ public class AIEvaluator : MonoBehaviour
         return MoveType.MOVE_TYPE_PASS;
     }
 
-    // Default is Skip 30% Chance | Reverse otherwise. Fallback is Plus One
+    // Default is Skip 15% Chance | Reverse otherwise. Fallback is Plus One
     private ActionType EvaluationNPC4()
     {
         ActionType bestAction = ActionType.ACTION_TYPE_DEFAULT;
-        float heuristic = 1.0f;
-
-        if (m_opponent == TurnOrder.TURN_ORDER_INVALID)
-        {
-            return ActionType.ACTION_TYPE_DEFAULT;
-        }
 
         // Check positions based on simulation Currently, there is only one but 
         List<Vector3> currentPositions = BoardManager.Instance.GetItemCurrentPositions();
@@ -292,7 +267,7 @@ public class AIEvaluator : MonoBehaviour
 
                 if (distSqrToPredicted >= distSqrToCurrent && Random.Range(0.0f, 1.0f) < 0.2f)
                 {
-                    bestAction = ActionType.ACTION_TYPE_PASS;
+                    bestAction = Random.Range(0f, 1f) < 0.2f ? ActionType.ACTION_TYPE_PASS : ActionType.ACTION_TYPE_FALLBACK;
                 }
             }
         }
@@ -300,12 +275,12 @@ public class AIEvaluator : MonoBehaviour
         return bestAction;
     }
 
-    // Default is Skip 30% Chance | Reverse otherwise. Fallback is Plus One
+    // Default is Skip 15% Chance | Reverse otherwise. Fallback is Plus One
     private MoveType GetNPC4Move(ActionType actionType)
     {
         if (actionType == ActionType.ACTION_TYPE_DEFAULT)
         {
-            if (Random.Range(0f, 1f) <= 0.3f)
+            if (Random.Range(0f, 1f) <= 0.15f)
             {
                 return MoveType.MOVE_TYPE_SKIP;
             }

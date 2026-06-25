@@ -38,7 +38,7 @@ public class TurnManager : MonoBehaviour
 {
     public static TurnManager Instance { get; private set; }
     public static event Action<int> OnRoundStartNotify;
-    public static event Action<TurnOrder, bool> OnTurnStartNotify;
+    public static event Action<TurnOrder> OnTurnStartNotify;
 
     public RoundState CurrentRoundState => _roundState;
     public TurnState CurrentTurnState => _turnState;
@@ -176,9 +176,8 @@ public class TurnManager : MonoBehaviour
     {
         Assert.IsTrue(_turnState == TurnState.TURN_STATE_START);
 
+        OnTurnStartNotify?.Invoke(turn);
         bool turnSkipped = IsTurnSkipped(turn);
-        OnTurnStartNotify?.Invoke(turn, turnSkipped);        
-
         yield return new WaitUntil(() => TurnUIAnimationComplete);
         TurnUIAnimationComplete = false;
 
@@ -197,7 +196,7 @@ public class TurnManager : MonoBehaviour
         // Turn End
         AdvanceTurnState();
 
-        yield return new WaitForSecondsRealtime(0.2f);
+        yield return new WaitForSecondsRealtime(0.5f);
 
         AdvanceTurnState();
     }
@@ -214,14 +213,21 @@ public class TurnManager : MonoBehaviour
 
         AdvanceRoundState(); // taking turns
 
+        yield return new WaitForSecondsRealtime(0.5f);
+
         for (int i = (int)TurnOrder.TURN_ORDER_PLAYER; i < (int)TurnOrder.TURN_ORDER_SIZE; ++i)
         {
             _currentTurn = (TurnOrder)i;
             yield return StartCoroutine(UpdateTurnInternal((TurnOrder)i));
 
             // TODO AQIN Yield here for until completion of the UI
-            // BoardManager.Instance.RotateBoard(); // NOTE AQIN: Removing this for now bc game feels too fast
+            BoardManager.Instance.RotateBoard();
+            yield return new WaitUntil(() => !BoardManager.Instance.IsBoardRotating);
         }
+
+        OnTurnStartNotify?.Invoke(TurnOrder.TURN_ORDER_INVALID);
+        yield return new WaitUntil(() =>TurnUIAnimationComplete);
+        TurnUIAnimationComplete = false;
 
         AdvanceRoundState(); // End
 

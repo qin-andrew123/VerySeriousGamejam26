@@ -224,7 +224,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 5
-  m_opponent: 4
 --- !u!1 &416398492
 GameObject:
   m_ObjectHideFlags: 0
@@ -330,7 +329,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 2
-  m_opponent: 1
 --- !u!1 &600354660
 GameObject:
   m_ObjectHideFlags: 0
@@ -543,7 +541,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 3
-  m_opponent: 2
 --- !u!1 &970129587
 GameObject:
   m_ObjectHideFlags: 0
@@ -654,7 +651,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57807da3f7e9c0d4fa980557c0d0fceb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardManager
-  _startingLives: 0
+  _gameplayControl: {fileID: 1626048717}
+  _startingLives: 3
   _angleOfRotation: 60
   _rotationDuration: 1
   _delayTime: 0.5
@@ -814,7 +812,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 4
-  m_opponent: 3
 --- !u!1 &1237807384
 GameObject:
   m_ObjectHideFlags: 0
@@ -1211,7 +1208,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIEvaluator
   m_AIType: 1
-  m_opponent: 0
 --- !u!1 &1611629856
 GameObject:
   m_ObjectHideFlags: 0
@@ -1293,7 +1289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameplayUIControl
   _roundFadeTime: 1
-  _turnFadeTime: 1
+  _turnDelay: 1
   _interactableSprite: {fileID: 2800000, guid: e915f797153094c4e9b6786394cefed9, type: 3}
   _uninteractableSprite: {fileID: 2800000, guid: c5c75d74cbce56945a3826c201f5427d, type: 3}
   _offsetForMouseTexture: {x: 100, y: 100}

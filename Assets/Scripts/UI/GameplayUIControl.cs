@@ -2,6 +2,8 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System;
+using System.Collections;
 
 public class GameplayButton
 {
@@ -17,10 +19,42 @@ public class GameplayButton
     }
 }
 
+public class ActorPortrait
+{
+    public Image ActorImage;
+    public bool IsCurrentTurn;
+    public int ActorIndex;
+
+    public ActorPortrait(Image actorImage, bool isCurrentTurn, int actorIndex)
+    {
+        ActorImage = actorImage;
+        IsCurrentTurn = isCurrentTurn;
+        ActorIndex = actorIndex;
+    }
+}
+
+public class ActorScore
+{
+    public VisualElement ScoreBoxRoot;
+    public Image ActorImage;
+    public TextElement ActorTextElement;
+    public int ActorScoreValue;
+    public int ActorIndex;
+    public bool ElementDoneAnimating = false;
+    public ActorScore(VisualElement scoreBoxRoot, Image actorImage, TextElement actorTextElement, int actorScoreValue, int actorIndex)
+    {
+        ScoreBoxRoot = scoreBoxRoot;
+        ActorImage = actorImage;
+        ActorTextElement = actorTextElement;
+        ActorScoreValue = actorScoreValue;
+        ActorIndex = actorIndex;
+    }
+}
+
 public class GameplayUIControl : MonoBehaviour
 {
     [SerializeField] private float _roundFadeTime = 1.0f;
-    [SerializeField] private float _turnFadeTime = 1.0f;
+    [SerializeField] private float _turnDelay = 1.0f;
     [SerializeField] private Texture2D _interactableSprite;
     [SerializeField] private Texture2D _uninteractableSprite;
     [SerializeField] private Vector2 _offsetForMouseTexture = new Vector2(3, 3);
@@ -29,14 +63,38 @@ public class GameplayUIControl : MonoBehaviour
 
     // Round Layout
     private VisualElement _roundRoot;
+    private VisualElement _turnContainer;
+    private List<ActorPortrait> _turnPortraits = new List<ActorPortrait>();
+    private Dictionary<string, int> _validPortraitToIndex = new Dictionary<string, int>();
     private TextElement _roundInfo;
-    private TextElement _turnInfo;
     private FadeElement _roundFade;
-    private FadeElement _turnFade;
 
+    // Score layout
+    private VisualElement _scoreContainer;
+    private List<ActorScore> _actorScores = new List<ActorScore>();
+    private Dictionary<string, int> _validActorScoreToIndex = new Dictionary<string, int>();
+    private Coroutine _scoreCoroutine = null;
+
+    // Remote Layout
     private VisualElement _remoteRoot;
     private List<GameplayButton> _gameplayButtons = new List<GameplayButton>();
     private Dictionary<string, int> _validButtonsToIndex = new Dictionary<string, int>();
+
+    public void UpdateScoreForActor(int actorIndex, int score)
+    {
+        ActorScore actor = _actorScores[actorIndex];
+        actor.ActorScoreValue = score;
+        actor.ActorTextElement.text = $": {actor.ActorScoreValue}";
+        if (_scoreCoroutine == null)
+        {
+            _scoreCoroutine = StartCoroutine(StartScoreBoxMove(actor));
+        }
+        else
+        {
+            StopCoroutine(_scoreCoroutine);
+            _scoreCoroutine = null;
+        }
+    }
 
     public void MarkButtonAsAvailable(int index)
     {
@@ -58,6 +116,7 @@ public class GameplayUIControl : MonoBehaviour
         button.AddToClassList("remotebutton");
     }
 
+    #region Remote Control
     private void HandleMouseEnter(MouseEnterEvent evt)
     {
         VisualElement target = evt.target as VisualElement;
@@ -104,6 +163,11 @@ public class GameplayUIControl : MonoBehaviour
                 PlayerActionManager.Instance.SelectAction(value);
             }
         }
+
+        for (int i = 0; i <_gameplayButtons.Count; ++i)
+        {
+            MarkButtonAsUnavailable(i);
+        }
     }
 
     private bool IsClickValid()
@@ -126,7 +190,9 @@ public class GameplayUIControl : MonoBehaviour
 
         return true;
     }
+    #endregion
 
+    #region Initialization
     private void InitializeButtonInfo(string buttonName)
     {
         Button action = m_rootUI.Q<Button>(buttonName);
@@ -138,16 +204,53 @@ public class GameplayUIControl : MonoBehaviour
         _validButtonsToIndex.Add(buttonName, currentIndex);
     }
 
+    private void InitializePortraitInfo(string portraitName)
+    {
+        Image portrait = _turnContainer.Q<Image>(portraitName);
+        Assert.IsNotNull(portrait);
+
+        int currentIndex = _turnPortraits.Count;
+        _turnPortraits.Add(new ActorPortrait(portrait, false, currentIndex));
+        _validPortraitToIndex.Add(portraitName, currentIndex);
+    }
+
+    private void InitializeScoreInfo(string actorScoreName)
+    {
+        VisualElement scoreRoot = _scoreContainer.Q<VisualElement>(actorScoreName);
+        Assert.IsNotNull(scoreRoot);
+
+        // Grab portrait and text element from the uxml child
+        Image portrait = scoreRoot.Q<Image>("Portrait");
+        TextElement score = scoreRoot.Q<TextElement>("Score");
+        score.text = $":";
+        int currentIndex = _actorScores.Count;
+        _actorScores.Add(new ActorScore(scoreRoot, portrait, score, 0, currentIndex));
+        _validActorScoreToIndex.Add(actorScoreName, currentIndex);
+    }
+
+
     private void InitializeRoundInfo()
     {
         _roundRoot = m_rootUI.Q<VisualElement>("TurnRoot");
         _roundInfo = m_rootUI.Q<TextElement>("RoundNum");
-        _turnInfo = m_rootUI.Q<TextElement>("CurrentTurn");
         _roundFade = new FadeElement(this, _roundInfo, _roundFadeTime);
-        _turnFade = new FadeElement(this, _turnInfo, _turnFadeTime);
-
         _roundFade.OnBannerComplete += OnRoundBannerComplete;
-        _turnFade.OnBannerComplete += OnTurnBannerComplete;
+
+        _turnContainer = m_rootUI.Q<VisualElement>("TurnContainer");
+        InitializePortraitInfo("PlayerPortrait");
+        InitializePortraitInfo("NPC1Portrait");
+        InitializePortraitInfo("NPC2Portrait");
+        InitializePortraitInfo("NPC3Portrait");
+        InitializePortraitInfo("NPC4Portrait");
+        InitializePortraitInfo("NPC5Portrait");
+
+        _scoreContainer = m_rootUI.Q<VisualElement>("ScoreRoot");
+        InitializeScoreInfo("PlayerScore");
+        InitializeScoreInfo("NPC1Score");
+        InitializeScoreInfo("NPC2Score");
+        InitializeScoreInfo("NPC3Score");
+        InitializeScoreInfo("NPC4Score");
+        InitializeScoreInfo("NPC5Score");
 
         _remoteRoot = m_rootUI.Q<VisualElement>("RemoteRoot");
         _remoteRoot.RegisterCallback<MouseEnterEvent>(HandleMouseEnter, TrickleDown.TrickleDown);
@@ -157,56 +260,6 @@ public class GameplayUIControl : MonoBehaviour
         InitializeButtonInfo("ActionTwo");
         InitializeButtonInfo("ActionThree");
         InitializeButtonInfo("ActionFour");
-    }
-
-    private void OnRoundBannerComplete()
-    {
-        TurnManager.Instance.RoundUIAnimationComplete = true;
-    }
-
-    private void OnTurnBannerComplete()
-    {
-        TurnManager.Instance.TurnUIAnimationComplete = true;
-    }
-
-    private void UpdateRoundInformation(int roundNumber)
-    {
-        _roundInfo.text = $"Round {roundNumber}";
-        _roundFade.Show();
-    }
-
-    private void UpdateTurnInformation(TurnOrder turn, bool isTurnSkipped)
-    {
-        if (isTurnSkipped)
-        {
-            _turnInfo.text = "Turn Skipped!";
-        }
-        else
-        {
-            switch (turn)
-            {
-                case TurnOrder.TURN_ORDER_PLAYER:
-                    _turnInfo.text = "Player's Turn";
-                    break;
-                case TurnOrder.TURN_ORDER_NPC1:
-                    _turnInfo.text = "NPC1's Turn";
-                    break;
-                case TurnOrder.TURN_ORDER_NPC2:
-                    _turnInfo.text = "NPC2's Turn";
-                    break;
-                case TurnOrder.TURN_ORDER_NPC3:
-                    _turnInfo.text = "NPC3's Turn";
-                    break;
-                case TurnOrder.TURN_ORDER_NPC4:
-                    _turnInfo.text = "NPC4's Turn";
-                    break;
-                case TurnOrder.TURN_ORDER_NPC5:
-                    _turnInfo.text = "NPC5's Turn";
-                    break;
-            }
-        }
-
-        _turnFade.Show();
     }
 
     private void OnEnable()
@@ -224,7 +277,6 @@ public class GameplayUIControl : MonoBehaviour
         TurnManager.OnTurnStartNotify -= UpdateTurnInformation;
 
         _roundFade.OnBannerComplete -= OnRoundBannerComplete;
-        _turnFade.OnBannerComplete -= OnTurnBannerComplete;
 
         _remoteRoot.UnregisterCallback<MouseEnterEvent>(HandleMouseEnter, TrickleDown.TrickleDown);
         _remoteRoot.UnregisterCallback<MouseLeaveEvent>(HandleMouseLeave, TrickleDown.TrickleDown);
@@ -235,4 +287,61 @@ public class GameplayUIControl : MonoBehaviour
             button.ActionButton.UnregisterCallback<MouseUpEvent>(HandleMouseUp);
         }
     }
+
+    #endregion
+
+    #region Game Information
+    private IEnumerator StartScoreBoxMove(ActorScore scoreElement)
+    {
+        _scoreContainer.AddToClassList("scorePanel--active");
+        yield return new WaitForSecondsRealtime(0.5f);
+
+        // Inner score element movement
+        scoreElement.ScoreBoxRoot.AddToClassList("scorePanel--active");
+        yield return new WaitForSecondsRealtime(0.5f);
+        scoreElement.ScoreBoxRoot.RemoveFromClassList("scorePanel--active");
+
+        // Outer score box movement
+        yield return new WaitForSecondsRealtime(3.0f);
+        _scoreContainer.RemoveFromClassList("scorePanel--active");
+    }
+
+
+    private void OnRoundBannerComplete()
+    {
+        TurnManager.Instance.RoundUIAnimationComplete = true;
+    }
+
+    private IEnumerator OnTurnAnimationComplete()
+    {
+        yield return new WaitForSecondsRealtime(_turnDelay);
+        TurnManager.Instance.TurnUIAnimationComplete = true;
+    }
+
+    private void UpdateRoundInformation(int roundNumber)
+    {
+        _roundInfo.text = $"Round {roundNumber}";
+        _roundFade.Show();
+    }
+
+    private void UpdateTurnInformation(TurnOrder turn)
+    {
+        foreach (ActorPortrait actor in _turnPortraits)
+        {
+            if ((int)turn == actor.ActorIndex)
+            {
+                actor.ActorImage.AddToClassList("portrait--active");
+                actor.IsCurrentTurn = true;
+            }
+            else
+            {
+                actor.ActorImage.RemoveFromClassList("portrait--active");
+                actor.IsCurrentTurn = false;
+            }
+        }
+
+        StartCoroutine(OnTurnAnimationComplete());
+    }
+
+    #endregion
 }
