@@ -37,7 +37,7 @@ public class MainMenuController : MonoBehaviour
 {
     // Inspector properties
     [SerializeField] private string FirstLevelName = "LevelOne";
-    [SerializeField] private UIDocument SettingsDocument;
+    [SerializeField] private SettingsController SettingsController;
 
     // Main menu UI document
     private UIDocument _uiDocument;
@@ -195,14 +195,13 @@ public class MainMenuController : MonoBehaviour
     private void OnClickSettings()
     {
         // Display settings menu
-
-        if (SettingsDocument == null)
+        if (SettingsController == null)
         {
-            Debug.LogError("Settings UIDocument not found!");
+            Debug.LogError("SettingsController not found!");
             return;
         }
 
-        SettingsDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+        SettingsController.DisplaySettings(showSettingsOverlay: true);
     }
 
     private void OnExit()

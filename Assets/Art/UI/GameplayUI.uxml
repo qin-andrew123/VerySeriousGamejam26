@@ -30,4 +30,7 @@
         <ui:Image source="project://database/Assets/Art/UI/Temp_MoveIcons_1.png?fileID=725503176578650515&amp;guid=757d1b5456b3a574581bf63ec723555d&amp;type=3#Temp_MoveIcons_1_5" name="TooltipImage" style="max-width: 70px; max-height: 70px; align-self: center; margin-top: 10px;"/>
         <ui:Label text="SKips the Turn of the next player" name="TooltipText" style="white-space: pre-wrap; align-self: center; -unity-text-align: middle-center; font-size: 50px;"/>
     </ui:VisualElement>
+    <ui:VisualElement name="PauseButtonRoot" style="flex-grow: 1; position: absolute; top: 25px; right: 25px;">
+        <ui:Button text="| |" name="PauseButton" class="pauseButton"/>
+    </ui:VisualElement>
 </ui:UXML>

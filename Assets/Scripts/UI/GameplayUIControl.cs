@@ -65,6 +65,7 @@ public class ActorScore
 
 public class GameplayUIControl : MonoBehaviour
 {
+    [SerializeField] private PauseController _pauseController;
     [SerializeField] private float _roundFadeTime = 1.0f;
     [SerializeField] private float _turnDelay = 1.0f;
     [SerializeField] private Texture2D _interactableSprite;
@@ -99,6 +100,10 @@ public class GameplayUIControl : MonoBehaviour
     private VisualElement _tooltipRoot;
     private Image _tooltipImage;
     private TextElement _tooltipText;
+
+    // Pause layout
+    private VisualElement _pauseButtonRoot;
+    private Button _pauseButton;
 
     public void UpdateScoreForActor(List<int> scores)
     {
@@ -341,6 +346,21 @@ public class GameplayUIControl : MonoBehaviour
         InitializeRoundInfo();
         TurnManager.OnRoundStartNotify += UpdateRoundInformation;
         TurnManager.OnTurnStartNotify += UpdateTurnInformation;
+
+        // Set up pause button
+        _pauseButtonRoot = m_rootUI.Q<VisualElement>("PauseButtonRoot");
+        if (_pauseButtonRoot == null)
+        {
+            Debug.LogError("Failed to set up pause button: root not found!");
+        }
+        else
+        {
+            _pauseButton = _pauseButtonRoot.Q<Button>("PauseButton");
+            if (_pauseButton == null)
+                Debug.LogError("Failed to set up pause button: button not found!");
+            else
+                _pauseButton.clicked += OnClickPause;
+        }
     }
 
     private void OnDisable()
@@ -360,6 +380,9 @@ public class GameplayUIControl : MonoBehaviour
             button.ActionButton.UnregisterCallback<MouseUpEvent>(HandleMouseUp);
             button.ActionButton.UnregisterCallback<MouseDownEvent>(HandleMouseDown,TrickleDown.TrickleDown);
         }
+
+        if (_pauseButton != null)
+            _pauseButton.clicked -= OnClickPause;
     }
 
     #endregion
@@ -428,4 +451,18 @@ public class GameplayUIControl : MonoBehaviour
     }
 
     #endregion
+
+    private void OnClickPause()
+    {
+        // Check for controller
+        if (_pauseController == null)
+        {
+            Debug.LogError("Could not complete Pause: controller not found");
+            return;
+        }
+        else
+        {
+            _pauseController.DoPause();
+        }
+    }
 }

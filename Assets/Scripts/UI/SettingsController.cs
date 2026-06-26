@@ -39,6 +39,7 @@ public struct Settings
 public class SettingsController : MonoBehaviour
 {
     [SerializeField] private GameObject DialogPrefab;
+    [SerializeField] private GameObject OverlayPrefab;
 
     // Settings UI document
     private UIDocument _uiDocument;
@@ -60,6 +61,8 @@ public class SettingsController : MonoBehaviour
     private Settings _lastSavedSettings;
 
     private DIALOG_RESULT _dialogResult = DIALOG_RESULT.None;
+
+    private GameObject _overlayInstance;
 
     #region Initialization
     private void OnEnable()
@@ -97,6 +100,20 @@ public class SettingsController : MonoBehaviour
 
         if (_sfxVolumeSlider != null)
             _sfxVolumeSlider.SetValueWithoutNotify(_lastSavedSettings.SfxVolume);
+
+        // Create and hide reusable overlay prefab
+        if (OverlayPrefab == null)
+        {
+            Debug.LogError("Unable to create overlay prefab for Settings");
+        }
+        else
+        {
+            _overlayInstance = Instantiate(OverlayPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+            if (_overlayInstance == null)
+                Debug.LogError("Overlay prefab for Settings is null");
+            else
+                ToggleOverlay(show: false);
+        }
     }
 
     private void OnDisable()
@@ -123,7 +140,35 @@ public class SettingsController : MonoBehaviour
         if (_saveButton != null)
             _saveButton.clicked -= OnClickSave;
     }
+
+    private void ToggleOverlay(bool show)
+    {
+        if (_overlayInstance == null)
+        {
+            Debug.LogError($"Failed to toggle overlay ({show}): instance is null");
+            return;
+        }
+
+        UIDocument overlayDocument = _overlayInstance.GetComponent<UIDocument>();
+        if (overlayDocument == null)
+        {
+            Debug.LogError($"Failed to toggle overlay ({show}: UIDocument is null");
+        }
+
+        overlayDocument.rootVisualElement.style.display =
+            show ? DisplayStyle.Flex : DisplayStyle.None;
+    }
     #endregion
+
+    public void DisplaySettings(bool showSettingsOverlay = false)
+    {
+        // Display settings UI
+        _uiDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+
+        // Display overlay if requested
+        if (showSettingsOverlay)
+            ToggleOverlay(showSettingsOverlay);
+    }
 
     #region Button events
     private void OnClickBack()
@@ -137,6 +182,7 @@ public class SettingsController : MonoBehaviour
 
             // Hide settings page
             _uiDocument.rootVisualElement.style.display = DisplayStyle.None;
+            ToggleOverlay(show: false);
         };
 
         if (HasUnsavedChanges())
@@ -148,7 +194,7 @@ public class SettingsController : MonoBehaviour
         }
         else
         {
-            backAction();
+            backAction();            
         }
     }
 

@@ -188,7 +188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
   FirstLevelName: Test_AQIN_TurnSys
-  SettingsDocument: {fileID: 974427050}
+  SettingsController: {fileID: 974427052}
 --- !u!1 &560628536
 GameObject:
   m_ObjectHideFlags: 0
@@ -438,7 +438,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 1521842f0074dbf47bf3bcb3b2de51eb, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 116001628ef334715aa63852b0c2ccde, type: 3}
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -474,6 +474,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SettingsController
   DialogPrefab: {fileID: 7688666951501162859, guid: a84297de6074b460ca266ebb78ca1d6e, type: 3}
+  OverlayPrefab: {fileID: 8278995153833851258, guid: 4d9f70307010f48e1825440479e89d76, type: 3}
   DefaultMusicVolume: 100
   DefaultSfxVolume: 100
 --- !u!1 &1651966781

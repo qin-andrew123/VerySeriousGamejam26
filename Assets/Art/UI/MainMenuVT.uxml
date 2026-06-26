@@ -1,11 +1,8 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Art/UI/MainMenuSS.uss?fileID=7433441132597879392&amp;guid=c043571989599434da65ed1fb31246ea&amp;type=3#MainMenuSS"/>
     <ui:VisualElement name="Page" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Art/UI/bricktexture.png?fileID=2800000&amp;guid=43107b59ef81b084ca3bba987ea95359&amp;type=3#bricktexture&quot;);">
-        <ui:Image source="project://database/Assets/Art/logo.png?fileID=2800000&amp;guid=afad5b1297def9f488f9a9a4001d49e2&amp;type=3#logo" scale-mode="ScaleToFit" style="width: 500px; align-self: center; height: 300px;"/>
-        <ui:Button text="New Game" name="NewGame" class="button" style="position: absolute; top: 300px;"/>
-        <ui:Button text="Settings" name="Settings" class="button" style="top: 400px;"/>
-        <ui:Button text="Exit" name="Exit" class="button" style="top: auto; bottom: 75px;"/>
-        <ui:ScrollView name="Leaderboard" style="position: absolute; top: 525px; align-self: center; width: 800px; height: 350px; background-color: rgb(174, 212, 255);">
+        <ui:Image source="project://database/Assets/Art/logo.png?fileID=2800000&amp;guid=afad5b1297def9f488f9a9a4001d49e2&amp;type=3#logo" scale-mode="ScaleToFit" style="align-self: center; position: absolute; top: 50px; width: 600px; height: 400px;"/>
+        <ui:ScrollView name="Leaderboard" style="position: absolute; top: 525px; align-self: center; width: 800px; height: 450px; background-color: rgb(123, 63, 149); right: 100px; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-left-color: rgb(153, 229, 146); border-right-color: rgb(153, 229, 146); border-top-color: rgb(153, 229, 146); border-bottom-color: rgb(153, 229, 146);">
             <ui:VisualElement name="Entry0" class="leaderboardEntry">
                 <ui:Label text="[PlayerName]" name="PlayerName"/>
                 <ui:Label text="[Score]" name="Score"/>
@@ -47,5 +44,10 @@
                 <ui:Label text="[Score]" name="Score"/>
             </ui:VisualElement>
         </ui:ScrollView>
+    </ui:VisualElement>
+    <ui:VisualElement name="ButtonPanel" style="flex-grow: 1; position: absolute; flex-direction: column; top: 550px; left: 450px; align-self: center;">
+        <ui:Button text="New Game" name="NewGame" class="button" style="top: 0;"/>
+        <ui:Button text="Settings" name="Settings" class="button" style="top: 100px;"/>
+        <ui:Button text="Exit" name="Exit" class="button" style="top: 200px;"/>
     </ui:VisualElement>
 </ui:UXML>

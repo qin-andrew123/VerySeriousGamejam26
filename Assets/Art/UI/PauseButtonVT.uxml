@@ -1,5 +1,0 @@
-<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:VisualElement name="Root" style="flex-grow: 1;">
-        <ui:Button text="| |&#10;" name="Pause" style="position: absolute; top: 25px; right: 25px; width: 75px; height: 75px; font-size: 35px; -unity-font-style: bold; color: rgb(255, 255, 255); background-color: rgb(72, 72, 72);"/>
-    </ui:VisualElement>
-</ui:UXML>

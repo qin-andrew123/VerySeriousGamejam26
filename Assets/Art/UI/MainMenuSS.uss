@@ -21,13 +21,17 @@
     position: absolute;
     top: 450px;
     justify-content: center;
+    color: rgb(128, 61, 168);
+    background-color: rgb(212, 191, 157);
+    -unity-font-style: bold;
 }
 
 .button:hover {
     scale: 1.1 1.1;
-    -unity-background-image-tint-color: rgb(255, 100, 100);
-    -unity-font-style: normal;
+    -unity-font-style: bold;
     font-size: 40px;
+    color: rgb(102, 36, 137);
+    background-color: rgb(204, 137, 107);
 }
 
 .leaderboardEntry {
@@ -39,4 +43,5 @@
     padding-left: 20px;
     -unity-font-style: bold;
     font-size: 25px;
+    color: rgb(153, 229, 146);
 }
