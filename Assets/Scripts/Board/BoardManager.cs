@@ -313,7 +313,7 @@ public class BoardManager : MonoBehaviour
                     _currentlyAvailableItems[i].ParentNode.SpawnPoint.position -
                     possibleIndicies[j].SpawnPoint.position);
 
-                if (distSqr <= 2.5f * 2.5f)
+                if (distSqr <= 2f * 2f)
                 {
                     possibleIndicies[j] = null;
                 }

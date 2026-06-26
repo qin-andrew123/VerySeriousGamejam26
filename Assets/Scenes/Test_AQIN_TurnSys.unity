@@ -522,7 +522,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 1521842f0074dbf47bf3bcb3b2de51eb, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 71d46e735611fa2499de87d91015a9ed, type: 3}
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -1508,6 +1508,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PauseController
   OverlayPrefab: {fileID: 8278995153833851258, guid: 4d9f70307010f48e1825440479e89d76, type: 3}
   DialogPrefab: {fileID: 7688666951501162859, guid: a84297de6074b460ca266ebb78ca1d6e, type: 3}
+  MainMenuName: MainMenu
   SettingsController: {fileID: 1423966900}
 --- !u!1 &1576773969
 GameObject:
