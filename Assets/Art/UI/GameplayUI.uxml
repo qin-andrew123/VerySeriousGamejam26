@@ -5,12 +5,12 @@
         <ui:VisualElement name="TurnRoot" style="flex-grow: 1; align-self: center; justify-content: center; align-items: flex-start; flex-direction: row; max-height: 100%; min-height: 50px; min-width: 100%; max-width: 100%; align-content: center; translate: 30px 0;">
             <ui:Label text="Current Round: 1" name="RoundNum" class="notify" style="font-size: 100px; align-self: center; justify-content: center; position: absolute; background-size: 100% 100%; -unity-text-align: middle-center; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-left-radius: 45px; border-top-right-radius: 45px; border-bottom-right-radius: 45px; border-bottom-left-radius: 45px; border-top-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-left-color: rgb(0, 0, 0); background-color: rgb(222, 177, 218); min-width: 900px; max-width: 900px; max-height: 200px; min-height: 150px;"/>
             <ui:VisualElement name="TurnContainer" style="flex-grow: 1; align-self: flex-start; align-items: center; flex-direction: row; justify-content: center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; top: 2%;">
-                <ui:Image name="PlayerPortrait" source="project://database/Resources/unity_builtin_extra?fileID=10904&amp;guid=0000000000000000f000000000000000&amp;type=0#UISprite" class="portrait"/>
-                <ui:Image name="NPC1Portrait" source="project://database/Resources/unity_builtin_extra?fileID=10904&amp;guid=0000000000000000f000000000000000&amp;type=0#UISprite" class="portrait"/>
-                <ui:Image name="NPC2Portrait" source="project://database/Resources/unity_builtin_extra?fileID=10904&amp;guid=0000000000000000f000000000000000&amp;type=0#UISprite" class="portrait"/>
-                <ui:Image name="NPC3Portrait" source="project://database/Resources/unity_builtin_extra?fileID=10904&amp;guid=0000000000000000f000000000000000&amp;type=0#UISprite" class="portrait"/>
-                <ui:Image name="NPC4Portrait" source="project://database/Resources/unity_builtin_extra?fileID=10904&amp;guid=0000000000000000f000000000000000&amp;type=0#UISprite" class="portrait"/>
-                <ui:Image name="NPC5Portrait" source="project://database/Resources/unity_builtin_extra?fileID=10904&amp;guid=0000000000000000f000000000000000&amp;type=0#UISprite" class="portrait"/>
+                <ui:Image name="PlayerPortrait" source="project://database/Assets/Art/TempAssets/tempPlayerAsset.png?fileID=2800000&amp;guid=26e7593546d722244a082c89f2c29ea0&amp;type=3#tempPlayerAsset" scale-mode="ScaleToFit" class="portrait"/>
+                <ui:Image name="NPC1Portrait" source="project://database/Assets/Art/TempAssets/tempNPC1Asset.png?fileID=2800000&amp;guid=faafd67fbc0df6a4da3668d50efb959f&amp;type=3#tempNPC1Asset" class="portrait"/>
+                <ui:Image name="NPC2Portrait" source="project://database/Assets/Art/TempAssets/tempNPC2Asset.png?fileID=2800000&amp;guid=da3523794dff3d74a8c82f62e876045b&amp;type=3#tempNPC2Asset" class="portrait"/>
+                <ui:Image name="NPC3Portrait" source="project://database/Assets/Art/TempAssets/tempNPC3Asset.png?fileID=2800000&amp;guid=1193ea49b858c574fa67256205abffaf&amp;type=3#tempNPC3Asset" class="portrait"/>
+                <ui:Image name="NPC4Portrait" source="project://database/Assets/Art/TempAssets/tempNPC4Asset.png?fileID=2800000&amp;guid=33b93c8ed60d3154c89b335acab05c73&amp;type=3#tempNPC4Asset" class="portrait"/>
+                <ui:Image name="NPC5Portrait" source="project://database/Assets/Art/TempAssets/tempNPC5Asset.png?fileID=2800000&amp;guid=f1154e3bd60c2ff42a92e04b0ae32519&amp;type=3#tempNPC5Asset" class="portrait"/>
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="RemoteRoot" class="remotebase" style="flex-grow: 1; position: absolute; right: 50px; bottom: 50px; width: 125px; height: 250px;">
@@ -29,5 +29,9 @@
             <ui:Instance template="ScoreBox" name="NPC4Score"/>
             <ui:Instance template="ScoreBox" name="NPC5Score"/>
         </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="TooltipRoot" style="flex-grow: 1; display: none; position: absolute; width: 500px; background-color: rgb(144, 140, 143); border-top-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-left-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px; right: 0; bottom: 0; max-height: 500px; height: 300px;">
+        <ui:Image source="project://database/Assets/Art/UI/Temp_MoveIcons_1.png?fileID=725503176578650515&amp;guid=757d1b5456b3a574581bf63ec723555d&amp;type=3#Temp_MoveIcons_1_5" name="TooltipImage" style="max-width: 70px; max-height: 70px; align-self: center; margin-top: 10px;"/>
+        <ui:Label text="SKips the Turn of the next player" name="TooltipText" style="white-space: pre-wrap; align-self: center; -unity-text-align: middle-center; font-size: 50px;"/>
     </ui:VisualElement>
 </ui:UXML>

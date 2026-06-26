@@ -128,7 +128,8 @@ public class SettingsController : MonoBehaviour
     #region Button events
     private void OnClickBack()
     {
-        Action backAction = () => {
+        Action backAction = () =>
+        {
             Debug.Log("Executing Back callback");
 
             // Discard any unsaved changes
@@ -156,7 +157,8 @@ public class SettingsController : MonoBehaviour
         StartCoroutine(RaiseDialogAndWait(
             titleText: "Reset settings?",
             bodyText: "All customised settings will be lost!",
-            okCallback: () => {
+            okCallback: () =>
+            {
                 Debug.Log("Executing ResetToDefaults callback");
 
                 // Reset volume sliders
@@ -176,13 +178,17 @@ public class SettingsController : MonoBehaviour
     private void SetSavePoint(bool raiseSaveFlag = true)
     {
         // Save all settings at current value
-        
+
         PlayerPrefs.SetInt("MusicVolume", _musicVolumeSlider.value);
         _lastSavedSettings.MusicVolume = _musicVolumeSlider.value;
+        float clampedMusicPrefsValue = Mathf.Clamp01((float)PlayerPrefs.GetInt("MusicVolume") / _musicVolumeSlider.highValue);
+        AudioManager.Instance.SetAudioSourceVolume(AudioSourceType.AST_MAIN, clampedMusicPrefsValue);
         Debug.Log($"Set MusicVolume to {_musicVolumeSlider.value}%");
 
         PlayerPrefs.SetInt("SfxVolume", _sfxVolumeSlider.value);
         _lastSavedSettings.SfxVolume = _sfxVolumeSlider.value;
+        float clampedSFXPrefsValue = Mathf.Clamp01((float)PlayerPrefs.GetInt("SfxVolume") / _sfxVolumeSlider.highValue);
+        AudioManager.Instance.SetAudioSourceVolume(AudioSourceType.AST_ONESHOT, clampedSFXPrefsValue);
         Debug.Log($"Set SfxVolume to {_sfxVolumeSlider.value}%");
 
         PlayerPrefs.Save();

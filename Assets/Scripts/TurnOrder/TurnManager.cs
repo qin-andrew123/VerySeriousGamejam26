@@ -52,7 +52,6 @@ public class TurnManager : MonoBehaviour
     public bool TurnUIAnimationComplete { get; set; } = false;
 
     [SerializeField] private AIManager _aiManager;
-
     private RoundState _roundState = RoundState.ROUND_STATE_INVALID;
     private TurnState _turnState = TurnState.TURN_STATE_INVALID;
     private TurnOrder _currentTurn = TurnOrder.TURN_ORDER_INVALID;
@@ -66,8 +65,9 @@ public class TurnManager : MonoBehaviour
 
     public void OnPlayerSelectedAction(MoveType inputMoveType)
     {
+#if UNITY_EDITOR
         Assert.IsTrue(_playerTurnMove == MoveType.MOVE_TYPE_INVALID);
-
+#endif
         _playerTurnMove = inputMoveType;
         _actionChosen = true;
     }
@@ -86,8 +86,9 @@ public class TurnManager : MonoBehaviour
     public void MarkNextTurnAsSkipped(TurnOrder turn)
     {
         int nextTurn = ((int)turn + 1) % (int)TurnOrder.TURN_ORDER_SIZE;
+#if UNITY_EDITOR
         Assert.IsTrue(nextTurn >= 0 && nextTurn < (int)TurnOrder.TURN_ORDER_SIZE);
-
+#endif
         _turnSkipStatus[nextTurn] = true;
     }
 
@@ -139,12 +140,8 @@ public class TurnManager : MonoBehaviour
             if (_playerTurnMove == MoveType.MOVE_TYPE_SKIP)
             {
                 MarkNextTurnAsSkipped(turn);
-                yield break;
             }
-            else
-            {
-                BoardManager.Instance.PerformBoardMove(_playerTurnMove);
-            }
+            BoardManager.Instance.PerformBoardMove(_playerTurnMove);
         }
         else if (turn > TurnOrder.TURN_ORDER_PLAYER && turn < TurnOrder.TURN_ORDER_SIZE)
         {
@@ -174,8 +171,9 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator UpdateTurnInternal(TurnOrder turn)
     {
+#if UNITY_EDITOR
         Assert.IsTrue(_turnState == TurnState.TURN_STATE_START);
-
+#endif
         OnTurnStartNotify?.Invoke(turn);
         bool turnSkipped = IsTurnSkipped(turn);
         yield return new WaitUntil(() => TurnUIAnimationComplete);
@@ -203,7 +201,9 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator UpdateRoundInternal()
     {
+#if UNITY_EDITOR
         Assert.IsTrue(_roundState == RoundState.ROUND_STATE_START);
+#endif
         ++_numRounds;
 
         BoardManager.Instance.InitializeBoard();
@@ -217,6 +217,12 @@ public class TurnManager : MonoBehaviour
 
         for (int i = (int)TurnOrder.TURN_ORDER_PLAYER; i < (int)TurnOrder.TURN_ORDER_SIZE; ++i)
         {
+            if (IsRoundOver)
+            {
+                IsRoundOver = false;
+                break;
+            }
+
             _currentTurn = (TurnOrder)i;
             yield return StartCoroutine(UpdateTurnInternal((TurnOrder)i));
 

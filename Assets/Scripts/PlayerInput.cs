@@ -66,9 +66,10 @@ public class PlayerInput : MonoBehaviour
         m_gameplayMap = InputSystem.actions.FindActionMap("Player");
         m_dialogueMap = InputSystem.actions.FindActionMap("Dialogue");
         m_menusMap = InputSystem.actions.FindActionMap("UI");
+#if UNITY_EDITOR
         Assert.IsNotNull(m_gameplayMap);
-        Assert.IsNotNull(m_dialogueMap);
         Assert.IsNotNull(m_menusMap);
+#endif
     }
 
     private void PollGameplayInput()
@@ -86,6 +87,11 @@ public class PlayerInput : MonoBehaviour
 
     private void PollDialogueInput()
     {
+        if (m_dialogueMap == null)
+        {
+            return;
+        }
+
         if (!m_dialogueMap.enabled)
         {
             return;

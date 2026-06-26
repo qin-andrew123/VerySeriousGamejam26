@@ -114,6 +114,8 @@
     transition-timing-function: ease-in-out;
     margin-right: 10px;
     margin-left: 10px;
+    max-width: 80px;
+    max-height: 80px;
 }
 
 .portrait--active {
@@ -152,7 +154,3 @@
     transition-timing-function: ease-in-out;
     transition-duration: 0.25s;
 }
-
-
-
-

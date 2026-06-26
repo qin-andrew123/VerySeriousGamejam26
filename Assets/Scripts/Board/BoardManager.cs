@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Rendering.Universal;
 
 public class BoardManager : MonoBehaviour
 {
@@ -13,6 +11,7 @@ public class BoardManager : MonoBehaviour
     public bool IsBoardRotating => m_isRotating;
     // UI Information
     [SerializeField] private GameplayUIControl _gameplayControl;
+    [SerializeField] private List<WantsUIController> _characterWants;
 
     // Player Fields. Gameplay Information
     [SerializeField] private int _startingLives = 3;
@@ -32,7 +31,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField] private List<GameObject> _itemSpawnPrefabs;
     [SerializeField]
     [Tooltip("Where the actor is positioned. Requred for determining if the actor can take item")]
-    private List<Transform> _actorPositions;
+    private List<GameObject> _actorPositions;
     [SerializeField] private List<Transform> _foodSpawnPoint;
     [SerializeField]
     [Tooltip("How close the item must be to goal to be considered as obtained")]
@@ -91,7 +90,9 @@ public class BoardManager : MonoBehaviour
             GameObject go = Instantiate(possibleItems[randomItemIndex]);
             GoalItem prefabGoalItem = go.GetComponent<GoalItem>();
             prefabGoalItem.PrefabID = possibleItems[randomItemIndex];
+#if UNITY_EDITOR
             Assert.IsNotNull(prefabGoalItem);
+#endif
             _currentlyAvailableItems.Add(prefabGoalItem);
             _setCurrentlyActivePrefabs.Add(possibleItems[randomItemIndex]);
 
@@ -126,18 +127,21 @@ public class BoardManager : MonoBehaviour
 
     public void PerformBoardMove(MoveType moveType)
     {
-        if (moveType == MoveType.MOVE_TYPE_PLUS_ONE)
+        AudioManager.Instance.PlayMoveSFX(moveType);
+
+        switch (moveType)
         {
-            RotateBoardByAmount(1);
+            case MoveType.MOVE_TYPE_PLUS_ONE:
+                RotateBoardByAmount(1);
+                break;
+            case MoveType.MOVE_TYPE_REVERSE:
+                TurningClockwise = !TurningClockwise;
+                break;
+            case MoveType.MOVE_TYPE_CHAOS:
+                RandomizeRotation();
+                break;
         }
-        else if (moveType == MoveType.MOVE_TYPE_REVERSE)
-        {
-            TurningClockwise = !TurningClockwise;
-        }
-        else if (moveType == MoveType.MOVE_TYPE_CHAOS)
-        {
-            RandomizeRotation();
-        }
+
         StartCoroutine(ActionCompleteDelay());
     }
     
@@ -160,10 +164,11 @@ public class BoardManager : MonoBehaviour
                 }
 
                 int turnToIndex = (int)turn;
-                float distSqr = Vector3.SqrMagnitude(_actorPositions[turnToIndex].position - item.gameObject.transform.position);
-
+                float distSqr = Vector2.SqrMagnitude(_actorPositions[turnToIndex].transform.position - item.gameObject.transform.position);
                 if (distSqr < bestDistanceSqr)
                 {
+                    Debug.Log($"Distance sqr to {item.name}: {bestDistanceSqr}, threshold: {_obtainDistance * _obtainDistance}");
+
                     bestDistanceSqr = distSqr;
                     closestIndex = turnToIndex;
                 }
@@ -173,27 +178,51 @@ public class BoardManager : MonoBehaviour
             {
                 TurnOrder bestAsTurn = (TurnOrder)closestIndex;
                 Debug.Log($"Item was obtained by {bestAsTurn}");
+                item.MoveAndShrinkTowardsTargetLocation(_actorPositions[closestIndex].transform.position);
 
                 // TODO AQIN: UI Here to describe success or loss
                 ++_actorScores[closestIndex];
-                _gameplayControl.UpdateScoreForActor(closestIndex, _actorScores[closestIndex]);
                 
                 elementsToRemove.Add(item);
-                Destroy(item.gameObject);
+
                 if (containsPlayerConstraint)
                 {
                     _isPlayerConstraintSatisfied = false;
-                    if (bestAsTurn != TurnOrder.TURN_ORDER_PLAYER)
+                    bool wasPlayerSuccess = bestAsTurn == TurnOrder.TURN_ORDER_PLAYER;
+                    string audioToPlay = wasPlayerSuccess ? "ObtainItem" : "LostItem";
+                    AudioManager.Instance.PlayAudioOneShot(audioToPlay);
+                    if (!wasPlayerSuccess)
                     {
                         --_currentLives;
 
-                        if (_currentLives <= 0)
+                        if (_currentLives < 0)
                         {
                             Debug.Log("Game has ended!");
                             TurnManager.Instance.IsGameOver = true;
                         }
                     }
                 }
+
+                foreach (TurnOrder turn in item.SatisfyingActors)
+                {
+                    int turnAsIndex = (int)turn;
+
+                    ActorAnimator animator = _actorPositions[turnAsIndex].GetComponent<ActorAnimator>();
+                    if (animator != null)
+                    {
+                        if (turn == bestAsTurn)
+                        {
+                            animator.PlaySuccess();
+                        }
+                        else
+                        {
+                            animator.PlayFail();
+                        }
+                    }
+
+                    _characterWants[turnAsIndex].gameObject.SetActive(false);
+                }
+
                 --_numActiveItems;
             }
         }
@@ -202,6 +231,14 @@ public class BoardManager : MonoBehaviour
         {
             _currentlyAvailableItems.Remove(i);
             _setCurrentlyActivePrefabs.Remove(i.PrefabID);
+            i.TryDestroy();
+        }
+
+        _gameplayControl.UpdateScoreForActor(_actorScores);
+
+        if (_currentlyAvailableItems.Count == 0)
+        {
+            TurnManager.Instance.IsRoundOver = true;
         }
     }
 
@@ -229,9 +266,22 @@ public class BoardManager : MonoBehaviour
 
             for (int j = 0; j < possibleIndicies.Count; ++j)
             {
+                if (possibleIndicies[j] == null)
+                {
+                    continue;
+                }
+
                 if (_currentlyAvailableItems[i].ParentNode == possibleIndicies[j])
                 {
                     possibleIndicies[j] = null;
+                    continue;
+                }
+
+                float distSqr = Vector2.SqrMagnitude(item.gameObject.transform.position - possibleIndicies[j].SpawnPoint.position);
+                if (distSqr <= 2.5f)
+                {
+                    possibleIndicies[j] = null;
+                    continue;
                 }
             }
         }
@@ -257,6 +307,24 @@ public class BoardManager : MonoBehaviour
             if (possibleIndicies[i] != null)
             {
                 validStartingLocations.Add(possibleIndicies[i]);
+
+                foreach (GoalItem test in _currentlyAvailableItems)
+                {
+                    if (test == item)
+                    {
+                        continue;
+                    }
+                    if (test.ParentNode.SpawnPoint.position != possibleIndicies[i].SpawnPoint.position)
+                    {
+                        if (Vector2.SqrMagnitude(possibleIndicies[i].SpawnPoint.position - test.gameObject.transform.position) <= 2.5f)
+                        {
+#if UNITY_EDITOR
+                            Assert.IsFalse(false, "We;re adding an invalid index");
+#endif
+                        }
+                    }
+                }
+                Debug.Log($"{item} valid location: {possibleIndicies[i].AssociatedActor}");
             }
         }
 
@@ -272,12 +340,17 @@ public class BoardManager : MonoBehaviour
 
             foreach (TurnOrder turn in item.SatisfyingActors)
             {
+#if UNITY_EDITOR
+
                 Assert.IsTrue(validStartingLocations[i].AssociatedActor != turn, "There is a valid location that is equal to a constraint. this shouldn't be possible");
+#endif
 
                 Vector3 satisfyingSpawnPointPosition;
                 if (!satisfyingPositions.TryGetValue(turn, out satisfyingSpawnPointPosition))
                 {
+#if UNITY_EDITOR
                     Assert.IsTrue(false, $"Failed to lookup satisfying constraint {turn}");
+#endif
                 }
                 calculatedWeight += Vector3.SqrMagnitude(satisfyingSpawnPointPosition - spawnPointPosition);
             }
@@ -298,7 +371,7 @@ public class BoardManager : MonoBehaviour
             randValue -= weights[i];
         }
 
-        item.gameObject.transform.parent = validStartingLocations[randIndex].SpawnPoint;
+        item.gameObject.transform.parent = gameObject.transform;
         item.gameObject.transform.position = validStartingLocations[randIndex].SpawnPoint.position;
         item.SetParentNode(validStartingLocations[randIndex]);
     }
@@ -376,12 +449,26 @@ public class BoardManager : MonoBehaviour
             }
             --numActorsToPick;
         }
+
+        foreach(TurnOrder turn in item.SatisfyingActors)
+        {
+            int turnAsIndex = (int)turn;
+            _characterWants[turnAsIndex].gameObject.SetActive(true);
+
+            SpriteRenderer itemSpriteRenderer = item.gameObject.GetComponent<SpriteRenderer>();
+#if UNITY_EDITOR
+            Assert.IsNotNull(itemSpriteRenderer);
+#endif
+            _characterWants[turnAsIndex].SetWant(itemSpriteRenderer.sprite.texture);
+        }
     }
 
     private void GenerateConstraintsForItem(GoalItem item)
     {
         PickActorConstraint(item, _isPlayerConstraintSatisfied ? 1 : 2);
+#if UNITY_EDITOR
         Assert.IsTrue(_isPlayerConstraintSatisfied, "Validating Items but Player Constraint isn't satisfied yet");
+#endif
     }
 
     private Vector3 CalculateItemLocation(Transform parent, Transform obj, Quaternion simulatedParentRotation)
@@ -419,7 +506,7 @@ public class BoardManager : MonoBehaviour
     private IEnumerator RotateBoardCoroutine()
     {
         m_isRotating = true;
-
+        AudioManager.Instance.PlayRepeatingOneShot("TableTurnStart");
         float totalAngle = _angleOfRotation * m_numRotations * (TurningClockwise ? -1f : 1f);
         
         Quaternion startRot = transform.rotation;
@@ -434,7 +521,10 @@ public class BoardManager : MonoBehaviour
             yield return null;
         }
 
+        AudioManager.Instance.StopPlayingRepeatingOneShot();
         transform.rotation = endRot;
+
+        AudioManager.Instance.PlayAudioOneShot("TableTurnEnd");
         yield return new WaitForSeconds(0.3f);
         m_isRotating = false;
         m_numRotations = 1;
@@ -461,12 +551,13 @@ public class BoardManager : MonoBehaviour
         _currentLives = _startingLives;
 
         // Initialize Board information
+#if UNITY_EDITOR
         Assert.IsTrue(_foodSpawnPoint.Count == (int)TurnOrder.TURN_ORDER_SIZE);
         Assert.IsTrue(_actorPositions.Count == (int)TurnOrder.TURN_ORDER_SIZE);
-
+#endif
         for (int i = 0; i <  _actorPositions.Count; ++i)
         {
-            BoardNode node = new BoardNode(_foodSpawnPoint[i], _actorPositions[i], (TurnOrder)i);
+            BoardNode node = new BoardNode(_foodSpawnPoint[i], _actorPositions[i].transform, (TurnOrder)i);
             _boardPoints.Add(node);
         }
     }
