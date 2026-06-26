@@ -1,10 +1,11 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:VisualElement style="flex-grow: 1;">
+    <Style src="project://database/Assets/Art/UI/WinLossSS.uss?fileID=7433441132597879392&amp;guid=914a9e109763df04794344a0fd37e7a3&amp;type=3#WinLossSS"/>
+    <ui:VisualElement name="winlossRoot" style="flex-grow: 1; display: none;">
         <ui:VisualElement style="flex-grow: 1; align-self: center; width: 1080px; height: 700px; position: absolute; top: 15%; bottom: auto; left: auto; right: auto; align-items: center; background-color: rgb(127, 161, 173); border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px; border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-left-color: rgb(0, 0, 0);">
-            <ui:Label text="YOU WIN/LOSE" style="font-size: 100px; top: 15%;"/>
+            <ui:Label text="YOU WIN/LOSE" name="GameState" style="font-size: 100px; top: 15%;"/>
             <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: space-evenly; height: 300px; width: 100%; position: absolute; bottom: 15%; align-items: center;">
-                <ui:Button text="Play Aqin?" name="PlayButton" style="width: 250px; height: 100px; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px;"/>
-                <ui:Button text="Quit&#10;" name="QuitButton" style="width: 250px; height: 100px; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px;"/>
+                <ui:Button text="Play Again?" name="PlayButton" class="lossbutton" style="width: 250px; height: 100px; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px; font-size: 40px;"/>
+                <ui:Button text="Quit&#10;" name="QuitButton" class="lossbutton" style="width: 250px; height: 100px; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px; font-size: 40px;"/>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

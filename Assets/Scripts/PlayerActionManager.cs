@@ -33,15 +33,6 @@ public class PlayerActionManager : MonoBehaviour
     }
     public void GenerateAvailableActions()
     {
-#if UNITY_EDITOR
-        // Debugging purposes for random action
-        if (false)
-        {
-            SelectAction(Random.Range(0,4));
-            return;
-        }
-#endif
-
         PickActionsRandom();
         MarkButtonAsAvailable();
     }

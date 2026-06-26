@@ -35,12 +35,8 @@ public class AIEvaluator : MonoBehaviour
             case TurnOrder.TURN_ORDER_NPC1:
                 return GetNPC1Move(actionType);
             case TurnOrder.TURN_ORDER_NPC2:
-                return GetNPC2Move(actionType);
-            case TurnOrder.TURN_ORDER_NPC3:
-                return GetNPC3Move(actionType);
-            case TurnOrder.TURN_ORDER_NPC4:
                 return GetNPC4Move(actionType);
-            case TurnOrder.TURN_ORDER_NPC5:
+            case TurnOrder.TURN_ORDER_NPC3:
                 return GetNPC5Move(actionType);
             default:
                 Debug.LogError("AIType is invalid");
@@ -324,12 +320,8 @@ public class AIEvaluator : MonoBehaviour
             case TurnOrder.TURN_ORDER_NPC1:
                 return EvaluationNPC1();
             case TurnOrder.TURN_ORDER_NPC2:
-                return EvaluationNPC2();
-            case TurnOrder.TURN_ORDER_NPC3:
-                return EvaluationNPC3();
-            case TurnOrder.TURN_ORDER_NPC4:
                 return EvaluationNPC4();
-            case TurnOrder.TURN_ORDER_NPC5:
+            case TurnOrder.TURN_ORDER_NPC3:
                 return EvaluationNPC5();
             default:
                 Debug.LogError("AIType is invalid");

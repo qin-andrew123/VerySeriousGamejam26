@@ -320,16 +320,12 @@ public class GameplayUIControl : MonoBehaviour
         InitializePortraitInfo("NPC1Portrait");
         InitializePortraitInfo("NPC2Portrait");
         InitializePortraitInfo("NPC3Portrait");
-        InitializePortraitInfo("NPC4Portrait");
-        InitializePortraitInfo("NPC5Portrait");
 
         _scoreContainer = m_rootUI.Q<VisualElement>("ScoreRoot");
         InitializeScoreInfo("PlayerScore");
         InitializeScoreInfo("NPC1Score");
         InitializeScoreInfo("NPC2Score");
         InitializeScoreInfo("NPC3Score");
-        InitializeScoreInfo("NPC4Score");
-        InitializeScoreInfo("NPC5Score");
 
         _remoteRoot = m_rootUI.Q<VisualElement>("RemoteRoot");
         _remoteRoot.RegisterCallback<MouseEnterEvent>(HandleMouseEnter, TrickleDown.TrickleDown);
