@@ -189,6 +189,7 @@ public class MainMenuController : MonoBehaviour
     {
         // Load into first level
         StartCoroutine(LoadFirstLevelAsync());
+        AudioManager.Instance.PlayAudioOneShot("Start");
     }
 
     private void OnClickSettings()

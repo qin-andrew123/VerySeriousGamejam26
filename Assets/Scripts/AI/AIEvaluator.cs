@@ -295,10 +295,10 @@ public class AIEvaluator : MonoBehaviour
         return MoveType.MOVE_TYPE_PASS;
     }
 
-    // Special 20% chance for chaos so 20% chance to do something otherwise pass.
+    // Special 30% chance for chaos so 30% chance to do something otherwise pass.
     private ActionType EvaluationNPC5()
     {
-        if (Random.Range(0f, 1f) < 0.2f)
+        if (Random.Range(0f, 1f) < 0.3f)
         {
             return ActionType.ACTION_TYPE_DEFAULT;
         }
@@ -306,7 +306,7 @@ public class AIEvaluator : MonoBehaviour
         return ActionType.ACTION_TYPE_PASS;
     }
 
-    // Special 20% chance for chaos so 20% chance to do something otherwise pass.
+    // Special 30% chance for chaos so 30% chance to do something otherwise pass.
     private MoveType GetNPC5Move(ActionType actionType)
     {
         if (actionType == ActionType.ACTION_TYPE_DEFAULT)

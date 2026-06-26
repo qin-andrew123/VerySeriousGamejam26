@@ -50,43 +50,7 @@ public class PlayerActionManager : MonoBehaviour
     {
         for (int i = 0; i < _availableActions.Count; ++i)
         {
-            _availableActions[i] = false;
-        }
-
-        float totalWeight = 0.0f;
-        foreach (var weight in _actionWeights)
-        {
-            totalWeight += weight;
-        }
-
-        List<int> pickedActionIndicies = new List<int>();
-        List<float> copyWeightedActions = new List<float>(_actionWeights);
-        List<int> remainingOriginalIndices = new List<int>();
-        for (int i = 0; i < _actionWeights.Count; ++i)
-        {
-            remainingOriginalIndices.Add(i);
-        }
-
-        while (pickedActionIndicies.Count < NUM_ACTIONS_PER_TURN && copyWeightedActions.Count > 0)
-        {
-            float randWeight = Random.Range(0.0f, totalWeight);
-            for (int i = 0; i < copyWeightedActions.Count; ++i)
-            {
-                if (copyWeightedActions[i] > randWeight)
-                {
-                    pickedActionIndicies.Add(remainingOriginalIndices[i]);
-                    totalWeight -= copyWeightedActions[i];
-                    copyWeightedActions.RemoveAt(i);
-                    remainingOriginalIndices.RemoveAt(i);
-                    break;
-                }
-                randWeight -= copyWeightedActions[i];
-            }
-        }
-
-        foreach (int index in pickedActionIndicies)
-        {
-            _availableActions[index] = true;
+            _availableActions[i] = true;
         }
     }
 

@@ -193,7 +193,7 @@ public class AudioManager : MonoBehaviour
     {
         yield return new WaitUntil(() => !_ambianceSource.isPlaying && _ambianceSource.time == 0);
 
-        float waitDurationSeconds = Random.Range(5f, 15f);
+        float waitDurationSeconds = Random.Range(10f, 30f);
         yield return new WaitForSecondsRealtime(waitDurationSeconds);
 
         int randomMusicIndex = Random.Range(0, _loadedSounds.BackgroundNoise.Count);

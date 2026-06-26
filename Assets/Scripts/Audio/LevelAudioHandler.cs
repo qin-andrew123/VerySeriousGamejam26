@@ -12,6 +12,7 @@ public class LevelAudioHandler : MonoBehaviour
         if (scene.name == _levelName)
         {
             AudioManager.Instance.PlayMainAudio(_audioToPlay);
+            AudioManager.Instance.PlayAmbiance("Ambiance");
         }
     }
 

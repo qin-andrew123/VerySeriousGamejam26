@@ -146,9 +146,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   _mainAudioSource: {fileID: 586482821247125601}
+  _mainVolumeInitial: 1
   _repeatingSFXSource: {fileID: 4581129199526512333}
+  _repeatingSFXVolumeInitial: 0.5
   _oneShotSource: {fileID: 1074616430565772698}
+  _oneshotVolumeInitial: 0.3
   _ambianceSource: {fileID: 4483758879880523992}
+  _ambianceVolumeInitial: 0.3
   _loadedSounds: {fileID: 11400000, guid: a5452649c4c9b1e4986f3514dd35b05d, type: 2}
 --- !u!1 &1468451514755702251
 GameObject:

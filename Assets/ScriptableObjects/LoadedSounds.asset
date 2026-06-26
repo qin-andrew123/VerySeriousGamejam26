@@ -23,7 +23,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d3b005b43213ea344b103bf2c22dc739, type: 2}
   - {fileID: 11400000, guid: 92d1b602b98456a4b945a7594a301934, type: 2}
   - {fileID: 11400000, guid: 74c01d2dbcb0ead4fb881de9062ee043, type: 2}
-  BackgroundNoise: []
+  - {fileID: 11400000, guid: 4c480046b5c06c2468cedcdcb6a7edf4, type: 2}
+  - {fileID: 11400000, guid: 65cf092f05b4b4b4ebc32e56c9526c6d, type: 2}
+  - {fileID: 11400000, guid: 5f88d91e59f932d489cbb91026d8eff3, type: 2}
+  BackgroundNoise:
+  - {fileID: 11400000, guid: 7a3efed1aeca36546a6970076faf5e36, type: 2}
   Music:
   - {fileID: 11400000, guid: eb312d5c91a6b864ab796998a1bb6def, type: 2}
   - {fileID: 11400000, guid: 362504f664596cc4daf04e529fd4a128, type: 2}
+  - {fileID: 11400000, guid: 787d8fef9c6f3e946877d06157e38fb8, type: 2}
