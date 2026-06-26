@@ -233,6 +233,13 @@ public class AudioManager : MonoBehaviour
         }
 
         _mainAudioSource.playOnAwake = false;
+
+        if (_loadedSounds == null)
+        {
+            Debug.LogError("AudioManager: Loaded Sounds is Null this is not good");
+            _loadedSounds = Resources.Load<LoadedSounds>("ScriptableObjects/LoadedSounds");
+        }
+
         _loadedSounds.InitializeSoundInfo();
 #if UNITY_EDITOR
         Assert.IsNotNull(_mainAudioSource);
