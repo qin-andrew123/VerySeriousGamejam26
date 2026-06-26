@@ -15,11 +15,6 @@ using UnityEngine.UIElements;
  * Visual indicator for unsaved changes
  * => Grayed-out "Save" button? Maybe
  * => Highlight/colour altered settings? Perchance.
- * 
- * Want the volume values shown next to slider.
- * 
- * Un/subscription null-checking
- * => Frankly gets repetitive as-is. Not high priority. Just thinking.
  */
 
 public enum DIALOG_RESULT
@@ -162,6 +157,8 @@ public class SettingsController : MonoBehaviour
 
     public void DisplaySettings(bool showSettingsOverlay = false)
     {
+        Debug.Log($"Requested to show Settings with overlay display: {showSettingsOverlay}");
+
         // Display settings UI
         _uiDocument.rootVisualElement.style.display = DisplayStyle.Flex;
 
@@ -262,14 +259,14 @@ public class SettingsController : MonoBehaviour
         if (_dialogResult != DIALOG_RESULT.None)
         {
             Debug.Log($"Another waiting dialog is already open!");
-            yield return null;
+            yield break;
         }
 
         GameObject dialogInstance = InstantiateDialog(titleText, bodyText);
         if (dialogInstance == null)
         {
             Debug.LogError($"Failed to instantiate dialog!");
-            yield return null;
+            yield break;
         }
 
         // Wait for user response

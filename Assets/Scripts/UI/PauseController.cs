@@ -11,6 +11,12 @@ public class PauseController : MonoBehaviour
     [SerializeField] GameObject OverlayPrefab;
     [SerializeField] GameObject DialogPrefab;
 
+    // Main menu Scene name
+    [SerializeField] private string MainMenuName = "MainMenu";
+
+    // Settings controller
+    [SerializeField] SettingsController SettingsController;
+
     // Visual elements
     private UIDocument _uiDocument;
     private Button _resumeButton;
@@ -99,26 +105,64 @@ public class PauseController : MonoBehaviour
     #region Button commands
     private void OnClickResume()
     {
-        // todo briez: close pause menu (and hide overlay)
-        Debug.Log("DO RESUME");
+        // Hide pause menu and overlay
+        ToggleOverlay(show: false);
+        _uiDocument.rootVisualElement.style.display = DisplayStyle.None;
+        
+        Debug.Log("Pause menu --> Resume");
     }
 
     private void OnClickSettings()
     {
-        // todo briez: open settings (and hide pause?)
-        Debug.Log("DO SETTINGS");
+        if (SettingsController == null)
+        {
+            Debug.LogError("Unable to open settings: controller not found!");
+            return;
+        }
+
+        // Display settings (without additional overlay)
+        SettingsController.DisplaySettings();
+
+        Debug.Log("Pause menu --> Settings");
     }
 
     private void OnClickExit()
     {
-        // todo briez: conf dialog and return to main menu
-        Debug.Log("DO EXIT");
+        // Exit callback
+        Action exitAction = () =>
+        {
+            Debug.Log("Executing Exit callback");
+            StartCoroutine(LoadMainMenuAsync());
+        };
+
+        // Raise confirmation dialog
+        StartCoroutine(RaiseDialogAndWait(
+            titleText: "Exit to main menu?",
+            bodyText: "Any unsaved progress will be lost!",
+            okCallback: exitAction));
+        
+        Debug.Log("Pause menu --> Exit");
     }
 
     private void OnClickQuitGame()
     {
-        // todo briez: close application
-        Debug.Log("DO QUITGAME");
+        // QuitGame callback
+        Action exitGameCallback = () =>
+        {
+            Application.Quit();
+#if UNITY_EDITOR
+            EditorApplication.isPlaying = false;
+#endif
+        };
+
+        // Raise confirmation dialog
+        StartCoroutine(RaiseDialogAndWait(
+            titleText: "Quit application?",
+            bodyText: "Any unsaved progress will be lost!",
+            okCallback: exitGameCallback));
+
+        Debug.Log("Pause menu --> QuitGame");
+
     }
     #endregion
 
@@ -139,4 +183,128 @@ public class PauseController : MonoBehaviour
         overlayDocument.rootVisualElement.style.display =
             show ? DisplayStyle.Flex : DisplayStyle.None;
     }
+
+    private IEnumerator LoadMainMenuAsync()
+    {
+        AsyncOperation loadOperation = SceneManager.LoadSceneAsync(MainMenuName);
+        loadOperation.allowSceneActivation = false;
+
+        while (!loadOperation.isDone)
+        {
+            if (loadOperation.progress >= 0.9f)
+            {
+                loadOperation.allowSceneActivation = true;
+            }
+
+            yield return null;
+        }
+    }
+
+    #region Warning Dialog
+    // Copied from SettingsController.cs with minor tweaks
+    // Duping is messier but faster ATP sorry
+    
+    private DIALOG_RESULT _dialogResult = DIALOG_RESULT.None;
+
+    private IEnumerator RaiseDialogAndWait(
+        string titleText, string bodyText, Action okCallback)
+    {
+        // Check for already-active dialogs
+        if (_dialogResult != DIALOG_RESULT.None)
+        {
+            Debug.Log($"Another waiting dialog is already open!");
+            yield break;
+        }
+
+        GameObject dialogInstance = InstantiateDialog(titleText, bodyText);
+        if (dialogInstance == null)
+        {
+            Debug.LogError($"Failed to instantiate dialog!");
+            yield break;
+        }
+
+        // Wait for user response
+        _dialogResult = DIALOG_RESULT.Waiting;
+        yield return new WaitUntil(() => _dialogResult != DIALOG_RESULT.Waiting);
+
+        // Execute callback if user elected to continue
+        if (_dialogResult == DIALOG_RESULT.OK)
+        {
+            okCallback();
+        }
+
+        CleanUpDialog(dialogInstance);
+        _dialogResult = DIALOG_RESULT.None;
+    }
+
+    private GameObject InstantiateDialog(string titleText, string bodyText)
+    {
+        // Create dialog GameObject
+        if (DialogPrefab == null)
+            return null;
+
+        GameObject dialogInstance = Instantiate(DialogPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+        if (dialogInstance == null)
+            return null;
+
+        // Get visual tree
+        UIDocument dialogDocument = dialogInstance.GetComponent<UIDocument>();
+        if (dialogDocument == null)
+            return null;
+
+        // Set text fields
+        Label titleField = dialogDocument.rootVisualElement.Q("Title") as Label;
+        Label bodyField = dialogDocument.rootVisualElement.Q("Body") as Label;
+
+        if (titleField != null)
+            titleField.text = titleText;
+        if (bodyField != null)
+            bodyField.text = bodyText;
+
+        // Listen to buttons
+        Button dialogCancelButton = dialogDocument.rootVisualElement.Q("Cancel") as Button;
+        Button dialogOkButton = dialogDocument.rootVisualElement.Q("OK") as Button;
+
+        if (dialogCancelButton != null)
+            dialogCancelButton.clicked += OnDialogCancel;
+        if (dialogOkButton != null)
+            dialogOkButton.clicked += OnDialogOk;
+
+        return dialogInstance;
+    }
+
+    private void CleanUpDialog(GameObject dialogInstance)
+    {
+        if (dialogInstance == null)
+            return;
+
+        UIDocument dialogDocument = dialogInstance.GetComponent<UIDocument>();
+        if (dialogDocument != null)
+        {
+            // Unsubscribe from buttons
+            Button dialogCancelButton = dialogDocument.rootVisualElement.Q("Cancel") as Button;
+            Button dialogOkButton = dialogDocument.rootVisualElement.Q("OK") as Button;
+
+            if (dialogCancelButton != null)
+                dialogCancelButton.clicked -= OnDialogCancel;
+            if (dialogOkButton != null)
+                dialogOkButton.clicked -= OnDialogOk;
+        }
+
+        // BEGONE BACK TO THE DARKNESS
+        Destroy(dialogInstance);
+    }
+
+    private void OnDialogCancel()
+    {
+        Debug.Log("User selected dialog option: Cancel");
+        _dialogResult = DIALOG_RESULT.Cancel;
+    }
+
+    private void OnDialogOk()
+    {
+        Debug.Log("User selected dialog option: OK");
+        _dialogResult = DIALOG_RESULT.OK;
+    }
+    #endregion
 }
