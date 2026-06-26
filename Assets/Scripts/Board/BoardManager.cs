@@ -12,6 +12,7 @@ public class BoardManager : MonoBehaviour
     // UI Information
     [SerializeField] private GameplayUIControl _gameplayControl;
     [SerializeField] private List<WantsUIController> _characterWants;
+    [SerializeField] private WinLossController _winLossController;
 
     // Player Fields. Gameplay Information
     [SerializeField] private int _startingLives = 3;
@@ -68,7 +69,7 @@ public class BoardManager : MonoBehaviour
         return result;
     }
 
-    
+
     public void InitializeBoard()
     {
         while (_numActiveItems < _numMaxActiveItems)
@@ -80,7 +81,7 @@ public class BoardManager : MonoBehaviour
                 possibleItems.Add(_itemSpawnPrefabs[i]);
             }
 
-            foreach(GameObject iter in _setCurrentlyActivePrefabs)
+            foreach (GameObject iter in _setCurrentlyActivePrefabs)
             {
                 possibleItems.Remove(iter);
             }
@@ -144,7 +145,7 @@ public class BoardManager : MonoBehaviour
 
         StartCoroutine(ActionCompleteDelay());
     }
-    
+
     public void CheckItemsForObtain()
     {
         List<GoalItem> elementsToRemove = new List<GoalItem>();
@@ -156,7 +157,7 @@ public class BoardManager : MonoBehaviour
             int closestIndex = 0;
 
             bool containsPlayerConstraint = false;
-            foreach(TurnOrder turn in item.SatisfyingActors)
+            foreach (TurnOrder turn in item.SatisfyingActors)
             {
                 if (turn == TurnOrder.TURN_ORDER_PLAYER)
                 {
@@ -182,7 +183,7 @@ public class BoardManager : MonoBehaviour
 
                 // TODO AQIN: UI Here to describe success or loss
                 ++_actorScores[closestIndex];
-                
+
                 elementsToRemove.Add(item);
 
                 if (containsPlayerConstraint)
@@ -197,7 +198,8 @@ public class BoardManager : MonoBehaviour
 
                         if (_currentLives < 0)
                         {
-                            Debug.Log("Game has ended!");
+                            AudioManager.Instance.PlayAudioOneShot("GameOver");
+                            _winLossController.UpdateGameState("YOU LOSE");
                             TurnManager.Instance.IsGameOver = true;
                         }
                     }
@@ -246,7 +248,7 @@ public class BoardManager : MonoBehaviour
     {
         Dictionary<TurnOrder, Vector3> satisfyingPositions = new Dictionary<TurnOrder, Vector3>();
         List<BoardNode> possibleIndicies = new List<BoardNode>();
-        foreach(BoardNode node in _boardPoints)
+        foreach (BoardNode node in _boardPoints)
         {
             if (item.SatisfyingActors.Contains(node.AssociatedActor))
             {
@@ -254,7 +256,7 @@ public class BoardManager : MonoBehaviour
             }
             possibleIndicies.Add(node);
         }
-        
+
         // Cannot spawn in positions that have something there already
         for (int i = 0; i < _currentlyAvailableItems.Count; ++i)
         {
@@ -307,23 +309,6 @@ public class BoardManager : MonoBehaviour
             if (possibleIndicies[i] != null)
             {
                 validStartingLocations.Add(possibleIndicies[i]);
-
-                foreach (GoalItem test in _currentlyAvailableItems)
-                {
-                    if (test == item)
-                    {
-                        continue;
-                    }
-                    if (test.ParentNode.SpawnPoint.position != possibleIndicies[i].SpawnPoint.position)
-                    {
-                        if (Vector2.SqrMagnitude(possibleIndicies[i].SpawnPoint.position - test.gameObject.transform.position) <= 2.5f)
-                        {
-#if UNITY_EDITOR
-                            Assert.IsFalse(false, "We;re adding an invalid index");
-#endif
-                        }
-                    }
-                }
                 Debug.Log($"{item} valid location: {possibleIndicies[i].AssociatedActor}");
             }
         }
@@ -394,12 +379,25 @@ public class BoardManager : MonoBehaviour
 
             for (int j = 0; j < possibleIndicies.Count; ++j)
             {
-                if (possibleIndicies[j] != null)
+                if (possibleIndicies[j] == null)
                 {
-                    if (_currentlyAvailableItems[i].SatisfyingActors.Contains(possibleIndicies[j].AssociatedActor))
+                    continue;
+                }
+
+                if (possibleIndicies[j].ActorPoint != null)
+                {
+                    if (possibleIndicies[j].AssociatedActor == TurnOrder.TURN_ORDER_INVALID)
                     {
                         possibleIndicies[j] = null;
                     }
+                    else if (_currentlyAvailableItems[i].SatisfyingActors.Contains(possibleIndicies[j].AssociatedActor))
+                    {
+                        possibleIndicies[j] = null;
+                    }
+                }
+                else
+                {
+                    possibleIndicies[j] = null;
                 }
             }
         }
@@ -407,7 +405,7 @@ public class BoardManager : MonoBehaviour
         List<BoardNode> validIndicies = new List<BoardNode>();
         for (int i = 0; i < possibleIndicies.Count; ++i)
         {
-            if (possibleIndicies[i] != null)
+            if (possibleIndicies[i] != null && possibleIndicies[i].AssociatedActor != TurnOrder.TURN_ORDER_INVALID)
             {
                 validIndicies.Add(possibleIndicies[i]);
             }
@@ -432,26 +430,33 @@ public class BoardManager : MonoBehaviour
 
         while (numActorsToPick > 0)
         {
+            if (validIndicies.Count == 0)
+            {
+                break;
+            }
+
+
             int randIndex = Random.Range(0, validIndicies.Count);
-            if (randIndex >= validIndicies.Count)
-            {
-                return;
-            }
             TurnOrder randomActor = validIndicies[randIndex].AssociatedActor;
-            item.AddActorAsSatisfying(randomActor);
-            foreach (BoardNode node in validIndicies)
+
+            if (randomActor == TurnOrder.TURN_ORDER_INVALID)
             {
-                if (node.AssociatedActor == randomActor)
-                {
-                    validIndicies.Remove(node);
-                    break;
-                }
+                validIndicies.RemoveAt(randIndex);
+                continue;
             }
+
+            item.AddActorAsSatisfying(randomActor);
+            validIndicies.RemoveAt(randIndex); 
             --numActorsToPick;
         }
 
-        foreach(TurnOrder turn in item.SatisfyingActors)
+        foreach (TurnOrder turn in item.SatisfyingActors)
         {
+            if (turn == TurnOrder.TURN_ORDER_INVALID)
+            {
+                continue;
+            }
+
             int turnAsIndex = (int)turn;
             _characterWants[turnAsIndex].gameObject.SetActive(true);
 
@@ -508,7 +513,7 @@ public class BoardManager : MonoBehaviour
         m_isRotating = true;
         AudioManager.Instance.PlayRepeatingOneShot("TableTurnStart");
         float totalAngle = _angleOfRotation * m_numRotations * (TurningClockwise ? -1f : 1f);
-        
+
         Quaternion startRot = transform.rotation;
         Quaternion endRot = startRot * Quaternion.Euler(0f, 0f, totalAngle);
         float elapsed = 0f;
@@ -551,13 +556,14 @@ public class BoardManager : MonoBehaviour
         _currentLives = _startingLives;
 
         // Initialize Board information
-#if UNITY_EDITOR
-        Assert.IsTrue(_foodSpawnPoint.Count == (int)TurnOrder.TURN_ORDER_SIZE);
-        Assert.IsTrue(_actorPositions.Count == (int)TurnOrder.TURN_ORDER_SIZE);
-#endif
-        for (int i = 0; i <  _actorPositions.Count; ++i)
+        for (int i = 0; i < _foodSpawnPoint.Count; ++i)
         {
-            BoardNode node = new BoardNode(_foodSpawnPoint[i], _actorPositions[i].transform, (TurnOrder)i);
+            bool validActorPosition = i >= _actorPositions.Count;
+
+            BoardNode node = new BoardNode(_foodSpawnPoint[i],
+                validActorPosition ? null : _actorPositions[i].transform,
+                validActorPosition ? TurnOrder.TURN_ORDER_INVALID : (TurnOrder)i);
+
             _boardPoints.Add(node);
         }
     }

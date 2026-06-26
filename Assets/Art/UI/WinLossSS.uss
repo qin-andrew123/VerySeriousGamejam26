@@ -1,0 +1,9 @@
+:root {
+}
+
+.lossbutton {
+}
+
+.lossbutton:hover {
+    background-color: rgb(123, 229, 118);
+}

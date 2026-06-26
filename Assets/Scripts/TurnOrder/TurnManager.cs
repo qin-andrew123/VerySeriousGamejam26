@@ -30,8 +30,6 @@ public enum TurnOrder
     TURN_ORDER_NPC1,
     TURN_ORDER_NPC2,
     TURN_ORDER_NPC3,
-    TURN_ORDER_NPC4,
-    TURN_ORDER_NPC5,
     TURN_ORDER_SIZE
 }
 public class TurnManager : MonoBehaviour
@@ -62,6 +60,21 @@ public class TurnManager : MonoBehaviour
     private ActionType _aiTurnAction = ActionType.ACTION_TYPE_INVALID;
     private MoveType _playerTurnMove = MoveType.MOVE_TYPE_INVALID;
     private List<bool> _turnSkipStatus;
+
+    private Coroutine _roundCoroutine = null;
+    public void ResetGame()
+    {
+        IsGameOver = false;
+        IsRoundOver = false;
+        _numRounds = 0;
+        if (_roundCoroutine != null)
+        {
+            StopCoroutine(_roundCoroutine);
+            _roundCoroutine = null;
+        }
+
+        BeginRounds();
+    }
 
     public void OnPlayerSelectedAction(MoveType inputMoveType)
     {
@@ -266,7 +279,7 @@ public class TurnManager : MonoBehaviour
     private void BeginRounds()
     {
         BoardManager.Instance.InitializeBoard();
-        StartCoroutine(UpdateGameInternal());
+        _roundCoroutine = StartCoroutine(UpdateGameInternal());
     }
 
     private void Start()
