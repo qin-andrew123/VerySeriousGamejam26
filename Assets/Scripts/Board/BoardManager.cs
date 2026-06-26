@@ -313,7 +313,7 @@ public class BoardManager : MonoBehaviour
                     _currentlyAvailableItems[i].ParentNode.SpawnPoint.position -
                     possibleIndicies[j].SpawnPoint.position);
 
-                if (distSqr <= 2f * 2f)
+                if (distSqr <= 1f)
                 {
                     possibleIndicies[j] = null;
                 }
@@ -376,21 +376,31 @@ public class BoardManager : MonoBehaviour
             totalWeight += calculatedWeight;
         }
 
-        float randValue = Random.Range(0, totalWeight);
         int randIndex = validStartingLocations.Count - 1; // fallback to last
-        for (int i = 0; i < validStartingLocations.Count; ++i)
+        if (validStartingLocations.Count > 0)
         {
-            if (weights[i] > randValue)
+            float randValue = Random.Range(0, totalWeight);
+            for (int i = 0; i < validStartingLocations.Count; ++i)
             {
-                randIndex = i;
-                break;
+                if (weights[i] > randValue)
+                {
+                    randIndex = i;
+                    break;
+                }
+                randValue -= weights[i];
             }
-            randValue -= weights[i];
+
+            item.gameObject.transform.position = validStartingLocations[randIndex].SpawnPoint.position;
+            item.SetParentNode(validStartingLocations[randIndex]);
+        }
+        else if (randIndex < 0 ||  randIndex >= validStartingLocations.Count)
+        {
+            randIndex = Random.Range(0, _boardPoints.Count);
+            item.gameObject.transform.position = _boardPoints[randIndex].SpawnPoint.position;
+            item.SetParentNode(_boardPoints[randIndex]);
         }
 
         item.gameObject.transform.parent = gameObject.transform;
-        item.gameObject.transform.position = validStartingLocations[randIndex].SpawnPoint.position;
-        item.SetParentNode(validStartingLocations[randIndex]);
     }
 
     private void PickActorConstraint(GoalItem item, int numActorsToPick)
