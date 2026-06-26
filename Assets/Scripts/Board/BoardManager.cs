@@ -44,7 +44,7 @@ public class BoardManager : MonoBehaviour
 
     public void ClearAllItems()
     {
-        foreach(GoalItem g in _currentlyAvailableItems)
+        foreach (GoalItem g in _currentlyAvailableItems)
         {
             Destroy(g.gameObject);
         }
@@ -276,6 +276,11 @@ public class BoardManager : MonoBehaviour
                 continue;
             }
 
+            if (_currentlyAvailableItems[i].ParentNode == null)
+            {
+                continue;
+            }
+
             for (int j = 0; j < possibleIndicies.Count; ++j)
             {
                 if (possibleIndicies[j] == null)
@@ -283,12 +288,17 @@ public class BoardManager : MonoBehaviour
                     continue;
                 }
 
-                if (_currentlyAvailableItems[i].ParentNode == null)
+                if (_currentlyAvailableItems[i].ParentNode == possibleIndicies[j])
                 {
+                    possibleIndicies[j] = null;
                     continue;
                 }
 
-                if (_currentlyAvailableItems[i].ParentNode == possibleIndicies[j])
+                float distSqr = Vector2.SqrMagnitude(
+                    _currentlyAvailableItems[i].ParentNode.SpawnPoint.position -
+                    possibleIndicies[j].SpawnPoint.position);
+
+                if (distSqr <= 1.5f * 1.5f)
                 {
                     possibleIndicies[j] = null;
                 }
@@ -453,7 +463,7 @@ public class BoardManager : MonoBehaviour
             }
 
             item.AddActorAsSatisfying(randomActor);
-            validIndicies.RemoveAt(randIndex); 
+            validIndicies.RemoveAt(randIndex);
             --numActorsToPick;
         }
 
