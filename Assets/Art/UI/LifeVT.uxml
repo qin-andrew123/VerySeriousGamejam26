@@ -1,0 +1,10 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="LifeRoot" style="flex-grow: 1; flex-direction: row; position: absolute; top: 25px; left: 25px;">
+        <ui:Image name="Life1" source="project://database/Assets/Art/UI/stomach.png?fileID=-5633561393553620639&amp;guid=5161791ccf0d54291b8ad46c0f74897c&amp;type=3#stomach_0" style="width: 75px; height: 75px;"/>
+        <ui:Image name="Life2" source="project://database/Assets/Art/UI/stomach.png?fileID=-5633561393553620639&amp;guid=5161791ccf0d54291b8ad46c0f74897c&amp;type=3#stomach_0" style="width: 75px; height: 75px;"/>
+        <ui:Image name="Life3" source="project://database/Assets/Art/UI/stomach.png?fileID=-5633561393553620639&amp;guid=5161791ccf0d54291b8ad46c0f74897c&amp;type=3#stomach_0" style="width: 75px; height: 75px;"/>
+    </ui:VisualElement>
+    <ui:VisualElement name="ScoreRoot" style="flex-grow: 1;">
+        <ui:Label text="" name="Score" style="position: absolute; top: 125px; left: 25px; color: rgb(80, 238, 94); font-size: 45px; -unity-font-style: bold; -unity-text-outline-width: 3px; -unity-text-outline-color: rgb(0, 0, 0);"/>
+    </ui:VisualElement>
+</ui:UXML>

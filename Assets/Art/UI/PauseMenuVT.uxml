@@ -5,13 +5,12 @@
         <ui:VisualElement name="Fork" class="utensil" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Art/UI/plate.png?fileID=-4795573259988461060&amp;guid=4172465f9cc3e4043967285a93971b6b&amp;type=3#plate_0&quot;); width: 125px; position: absolute; height: 800px; left: 150px;"/>
     </ui:VisualElement>
     <ui:VisualElement name="Page" style="position: absolute; top: 100px; align-self: center; width: 1200px; height: 800px; background-color: rgb(77, 77, 77); padding-top: 130px; padding-right: 200px; padding-bottom: 150px; padding-left: 200px; background-image: url(&quot;project://database/Assets/Art/UI/plate.png?fileID=330159055237114263&amp;guid=4172465f9cc3e4043967285a93971b6b&amp;type=3#plate_1&quot;);">
-        <ui:Label text="Settings" name="Title" style="font-size: 50px; -unity-text-align: upper-center; color: rgb(0, 0, 0); -unity-font-style: bold; margin-bottom: 50px;"/>
-        <ui:SliderInt label="Music" value="100" high-value="100" name="MusicVolume" fill="true" class="slider"/>
-        <ui:SliderInt label="SFX" value="100" high-value="100" name="SfxVolume" fill="true" class="slider"/>
-        <ui:VisualElement name="ButtonBar" style="flex-grow: 1; align-self: flex-start; flex-direction: row; align-items: flex-end;">
-            <ui:Button text="Back" name="Back" class="button" style="align-items: flex-start; margin-right: 110px;"/>
-            <ui:Button text="Reset to defaults" name="ResetToDefaults" class="button"/>
-            <ui:Button text="Save" name="Save" class="button"/>
+        <ui:Label text="Pause" name="Title" style="font-size: 50px; -unity-text-align: upper-center; color: rgb(0, 0, 0); -unity-font-style: bold; margin-bottom: 50px;"/>
+        <ui:VisualElement name="ButtonBar" style="flex-grow: 1; align-self: center; flex-direction: column; align-items: flex-end; justify-content: space-around;">
+            <ui:Button text="Resume&#10;" name="Resume" class="button" style="align-items: flex-start;"/>
+            <ui:Button text="Settings" name="Settings" class="button" style="align-items: flex-start;"/>
+            <ui:Button text="Exit" name="Exit" class="button" style="align-items: flex-start;"/>
+            <ui:Button text="Quit Game" name="QuitGame" class="button" style="align-items: flex-start;"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

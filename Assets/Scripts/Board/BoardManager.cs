@@ -11,11 +11,12 @@ public class BoardManager : MonoBehaviour
     public bool IsBoardRotating => m_isRotating;
     // UI Information
     [SerializeField] private GameplayUIControl _gameplayControl;
+    [SerializeField] private LifeUIController _lifeUIController;
     [SerializeField] private List<WantsUIController> _characterWants;
     [SerializeField] private WinLossController _winLossController;
 
     // Player Fields. Gameplay Information
-    [SerializeField] private int _startingLives = 3;
+	private int _startingLives = 3;
     private int _currentLives = 0;
     private List<int> _actorScores = new List<int>();
 
@@ -206,6 +207,13 @@ public class BoardManager : MonoBehaviour
                     {
                         --_currentLives;
 
+                        // Update life UI
+                        if (_lifeUIController is null)
+                            Debug.LogError("Unable to update lives UI: controller null");
+                        else
+                            _lifeUIController.SetLives(_currentLives);
+
+                        // Check for death
                         if (_currentLives < 0)
                         {
                             AudioManager.Instance.PlayAudioOneShot("GameOver");
@@ -247,6 +255,13 @@ public class BoardManager : MonoBehaviour
         }
 
         _gameplayControl.UpdateScoreForActor(_actorScores);
+
+        // Update score UI
+        if (_lifeUIController == null ||
+            _actorScores.Count < 1)
+            Debug.LogError("Unable to update score UI: controller is null");
+        else
+            _lifeUIController.SetScore(_actorScores.First());
 
         if (_currentlyAvailableItems.Count == 0)
         {
@@ -570,6 +585,12 @@ public class BoardManager : MonoBehaviour
         // Initialize Lives and score
         _actorScores = Enumerable.Repeat(0, (int)TurnOrder.TURN_ORDER_SIZE).ToList();
         _currentLives = _startingLives;
+
+        // Update life UI
+        if (_lifeUIController is null)
+            Debug.LogError("Unable to update lives UI: controller null");
+        else
+            _lifeUIController.SetLives(_currentLives);
 
         // Initialize Board information
         for (int i = 0; i < _foodSpawnPoint.Count; ++i)
