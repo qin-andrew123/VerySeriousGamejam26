@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/LevelOne.unity
     guid: 5aa9fb8fdc1ea674ca976b21b9574a0b
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/AQIN_MainMenu.unity
     guid: 0aa2fc1eba4c6a246abe8a1a97a6aaa4
   - enabled: 1
