@@ -12,11 +12,11 @@
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="RemoteRoot" class="remotebase" style="flex-grow: 1; position: absolute; right: 50px; bottom: 50px; width: 125px; height: 250px;">
-            <ui:Image name="RemoteBase" source="" scale-mode="ScaleToFit" style="min-width: 100%; min-height: 100%; justify-content: space-evenly; align-items: center; background-color: rgb(0, 65, 23);">
-                <ui:Button text="" icon-image="" name="ActionOne" tooltip="This one is plus one" class="remotebutton" style="top: 0; left: 0; position: relative; right: 0; bottom: 0;"/>
-                <ui:Button text="" icon-image="" name="ActionTwo" tooltip="This one is skip" class="remotebutton" style="position: relative;"/>
-                <ui:Button text="" icon-image="" name="ActionThree" tooltip="This one is Reverse" class="remotebutton" style="position: relative;"/>
-                <ui:Button text="" icon-image="" name="ActionFour" tooltip="This one is Chaos" class="remotebutton" style="position: relative;"/>
+            <ui:Image name="RemoteBase" source="" scale-mode="ScaleToFit" style="min-width: 100%; min-height: 100%;">
+                <ui:Button text="" icon-image="project://database/Assets/Art/botton1.png?fileID=2800000&amp;guid=b369666aa8cf93a4986ac1bea2698760&amp;type=3#botton1" name="ActionOne" tooltip="This one is plus one" class="remotebutton" style="bottom: 45px; left: 5px;"/>
+                <ui:Button text="" icon-image="project://database/Assets/Art/botton2.png?fileID=2800000&amp;guid=5be369b08e780ff4ba93d93cfe308f26&amp;type=3#botton2" name="ActionTwo" tooltip="This one is skip" class="remotebutton" style="top: auto; left: 35px; bottom: 70px;"/>
+                <ui:Button text="" icon-image="project://database/Assets/Art/botton3.png?fileID=2800000&amp;guid=4261ed9bb39183f4fb45027a4a183f14&amp;type=3#botton3" name="ActionThree" tooltip="This one is Reverse" class="remotebutton" style="top: auto; left: auto; right: 5px; bottom: 45px;"/>
+                <ui:Button text="" icon-image="project://database/Assets/Art/botton4.png?fileID=2800000&amp;guid=da29488c134b07246b98b9255b6972c1&amp;type=3#botton4" name="ActionFour" tooltip="This one is Chaos" class="remotebutton" style="top: auto; left: 37px; bottom: 15px;"/>
             </ui:Image>
         </ui:VisualElement>
         <ui:VisualElement name="ScoreRoot" picking-mode="Ignore" class="scorePanel">

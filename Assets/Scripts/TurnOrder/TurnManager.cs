@@ -73,6 +73,10 @@ public class TurnManager : MonoBehaviour
             _roundCoroutine = null;
         }
 
+        BoardManager.Instance.ClearAllItems();
+
+        _roundState = RoundState.ROUND_STATE_START;
+        _turnState = TurnState.TURN_STATE_START;
         BeginRounds();
     }
 
@@ -184,9 +188,8 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator UpdateTurnInternal(TurnOrder turn)
     {
-#if UNITY_EDITOR
-        Assert.IsTrue(_turnState == TurnState.TURN_STATE_START);
-#endif
+        _turnState = TurnState.TURN_STATE_START;
+
         OnTurnStartNotify?.Invoke(turn);
         bool turnSkipped = IsTurnSkipped(turn);
         yield return new WaitUntil(() => TurnUIAnimationComplete);
@@ -195,18 +198,17 @@ public class TurnManager : MonoBehaviour
         if (turnSkipped)
         {
             ResetTurnSkips();
+            _turnState = TurnState.TURN_STATE_START;
             yield break;
         }
 
-        AdvanceTurnState();
+        _turnState = TurnState.TURN_STATE_CHOOSING;
         yield return StartCoroutine(WaitOnActionChosen(turn));
 
-        AdvanceTurnState();
+        _turnState = TurnState.TURN_STATE_PLAY_ACTION;
         yield return StartCoroutine(WaitOnActionPerformed(turn));
 
-        // Turn End
-        AdvanceTurnState();
-
+        _turnState = TurnState.TURN_STATE_END_TURN;
         yield return new WaitForSecondsRealtime(0.5f);
 
         AdvanceTurnState();
@@ -214,9 +216,7 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator UpdateRoundInternal()
     {
-#if UNITY_EDITOR
-        Assert.IsTrue(_roundState == RoundState.ROUND_STATE_START);
-#endif
+        _roundState = RoundState.ROUND_STATE_START;
         ++_numRounds;
 
         BoardManager.Instance.InitializeBoard();
@@ -224,7 +224,7 @@ public class TurnManager : MonoBehaviour
         yield return new WaitUntil(() => RoundUIAnimationComplete);
         RoundUIAnimationComplete = false;
 
-        AdvanceRoundState(); // taking turns
+        _roundState = RoundState.ROUND_STATE_TAKING_TURNS;
 
         yield return new WaitForSecondsRealtime(0.5f);
 
@@ -233,7 +233,7 @@ public class TurnManager : MonoBehaviour
             if (IsRoundOver)
             {
                 IsRoundOver = false;
-                break;
+                yield break;
             }
 
             _currentTurn = (TurnOrder)i;
@@ -248,7 +248,7 @@ public class TurnManager : MonoBehaviour
         yield return new WaitUntil(() =>TurnUIAnimationComplete);
         TurnUIAnimationComplete = false;
 
-        AdvanceRoundState(); // End
+        _roundState = RoundState.ROUND_STATE_END;
 
         yield return new WaitForSecondsRealtime(0.2f);
 
