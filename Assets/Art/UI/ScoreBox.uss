@@ -3,16 +3,40 @@
 
 .scorePanel {
     color: rgb(0, 0, 0);
-    transition-property: translate, color;
+    transition-property: translate, border-color;
     transition-timing-function: ease-in-out, ease;
-    transition-duration: 0.5s, 0.2s;
+    transition-duration: 0.1s, 0.2s;
+    margin-top: 2px;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    margin-left: 2px;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    border-top-color: rgb(0, 57, 108);
+    border-right-color: rgb(0, 57, 108);
+    border-bottom-color: rgb(0, 57, 108);
+    border-left-color: rgb(0, 57, 108);
+    border-top-width: 5px;
+    border-right-width: 5px;
+    border-bottom-width: 5px;
+    border-left-width: 5px;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
+    border-bottom-left-radius: 50px;
+    background-color: rgb(44, 76, 103);
+    width: 250px;
+    height: 100px;
+    max-height: 100px;
 }
 
 .scorePanel--active {
-    translate: 10% 0;
+    translate: 20px 0;
     color: rgb(0, 255, 7);
-    transition-property: translate, color;
-    transition-duration: 0.5s, 0.5s;
-    transition-timing-function: ease-in-out, ease;
-    transition-delay: 0s, 0s;
+    transition-property: translate;
+    transition-duration: 0.1s;
+    transition-timing-function: ease-in-out;
+    transition-delay: 0s;
 }

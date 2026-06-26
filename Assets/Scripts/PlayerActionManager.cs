@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using static UnityEngine.Rendering.DebugUI;
 
 public class PlayerActionManager : MonoBehaviour
 {
@@ -19,9 +20,11 @@ public class PlayerActionManager : MonoBehaviour
 
     public void SelectAction(int index)
     {
+#if UNITY_EDITOR
         Assert.IsTrue(_availableActions[index]);
 
         Assert.IsTrue(index >= 0 && index < (int)MoveType.MOVE_TYPE_SIZE);
+#endif
 
         Debug.Log("Player Picked Action: " + index);
 
@@ -30,6 +33,15 @@ public class PlayerActionManager : MonoBehaviour
     }
     public void GenerateAvailableActions()
     {
+#if UNITY_EDITOR
+        // Debugging purposes for random action
+        if (false)
+        {
+            SelectAction(Random.Range(0,4));
+            return;
+        }
+#endif
+
         PickActionsRandom();
         MarkButtonAsAvailable();
     }
@@ -104,7 +116,9 @@ public class PlayerActionManager : MonoBehaviour
 
         _availableActions = Enumerable.Repeat(false, 4).ToList();
 
+#if UNITY_EDITOR
         Assert.IsTrue(_actionWeights.Count == (int)MoveType.MOVE_TYPE_SIZE);
         Assert.IsTrue(_availableActions.Count == (int)MoveType.MOVE_TYPE_SIZE);
+#endif
     }
 }

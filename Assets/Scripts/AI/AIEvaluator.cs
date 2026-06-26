@@ -1,5 +1,3 @@
-using Mono.Cecil.Cil;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -297,10 +295,10 @@ public class AIEvaluator : MonoBehaviour
         return MoveType.MOVE_TYPE_PASS;
     }
 
-    // Special 5% chance for chaos so 5% chance to do something otherwise pass.
+    // Special 20% chance for chaos so 20% chance to do something otherwise pass.
     private ActionType EvaluationNPC5()
     {
-        if (Random.Range(0f, 1f) < 0.05f)
+        if (Random.Range(0f, 1f) < 0.2f)
         {
             return ActionType.ACTION_TYPE_DEFAULT;
         }
@@ -308,7 +306,7 @@ public class AIEvaluator : MonoBehaviour
         return ActionType.ACTION_TYPE_PASS;
     }
 
-    // Special 5% chance for chaos so 5% chance to do something otherwise pass.
+    // Special 20% chance for chaos so 20% chance to do something otherwise pass.
     private MoveType GetNPC5Move(ActionType actionType)
     {
         if (actionType == ActionType.ACTION_TYPE_DEFAULT)

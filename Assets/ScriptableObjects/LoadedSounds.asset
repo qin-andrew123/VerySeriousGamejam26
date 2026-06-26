@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2e55d9f3fe9c940a82eff232efeed9, type: 3}
+  m_Name: LoadedSounds
+  m_EditorClassIdentifier: Assembly-CSharp::LoadedSounds
+  OneShots:
+  - {fileID: 11400000, guid: 90948ea2b4adb104abb48505830fd7d8, type: 2}
+  - {fileID: 11400000, guid: 8bf13c837ef26444b9459b1970ebf9f6, type: 2}
+  - {fileID: 11400000, guid: 5d6d991692a787c419aae171549567c8, type: 2}
+  - {fileID: 11400000, guid: be5402d9475a9444db26f27903e3a6b9, type: 2}
+  - {fileID: 11400000, guid: 13d8abfc32ed72a4a9cceddd72959278, type: 2}
+  - {fileID: 11400000, guid: 65946695d72074742b2cfb1eb04353fd, type: 2}
+  - {fileID: 11400000, guid: db0d44ae1343c4b44bd664adf0e1f921, type: 2}
+  - {fileID: 11400000, guid: d3b005b43213ea344b103bf2c22dc739, type: 2}
+  - {fileID: 11400000, guid: 92d1b602b98456a4b945a7594a301934, type: 2}
+  - {fileID: 11400000, guid: 74c01d2dbcb0ead4fb881de9062ee043, type: 2}
+  BackgroundNoise: []
+  Music:
+  - {fileID: 11400000, guid: eb312d5c91a6b864ab796998a1bb6def, type: 2}
+  - {fileID: 11400000, guid: 362504f664596cc4daf04e529fd4a128, type: 2}

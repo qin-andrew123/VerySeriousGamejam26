@@ -1,9 +1,11 @@
 using NUnit.Framework;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UIElements;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UIElements;
 
 public class GameplayButton
 {
@@ -40,7 +42,8 @@ public class ActorScore
     public TextElement ActorTextElement;
     public int ActorScoreValue;
     public int ActorIndex;
-    public bool ElementDoneAnimating = false;
+    public bool ShouldAnimate = false;
+
     public ActorScore(VisualElement scoreBoxRoot, Image actorImage, TextElement actorTextElement, int actorScoreValue, int actorIndex)
     {
         ScoreBoxRoot = scoreBoxRoot;
@@ -48,6 +51,15 @@ public class ActorScore
         ActorTextElement = actorTextElement;
         ActorScoreValue = actorScoreValue;
         ActorIndex = actorIndex;
+    }
+
+    public IEnumerator RunAnimation()
+    {
+        // Inner score element movement
+        ScoreBoxRoot.AddToClassList("scorePanel--active");
+        yield return new WaitForSecondsRealtime(1f);
+        ScoreBoxRoot.RemoveFromClassList("scorePanel--active");
+        ShouldAnimate = false;
     }
 }
 
@@ -58,6 +70,9 @@ public class GameplayUIControl : MonoBehaviour
     [SerializeField] private Texture2D _interactableSprite;
     [SerializeField] private Texture2D _uninteractableSprite;
     [SerializeField] private Vector2 _offsetForMouseTexture = new Vector2(3, 3);
+    [SerializeField] private List<Texture2D> _portraitIcons = new List<Texture2D>();
+    [SerializeField] private List<Sprite> _tooltipImages = new List<Sprite>();
+    [SerializeField] private List<string> _tooltipDescriptions = new List<string>();
 
     private VisualElement m_rootUI;
 
@@ -80,20 +95,27 @@ public class GameplayUIControl : MonoBehaviour
     private List<GameplayButton> _gameplayButtons = new List<GameplayButton>();
     private Dictionary<string, int> _validButtonsToIndex = new Dictionary<string, int>();
 
-    public void UpdateScoreForActor(int actorIndex, int score)
+    // Tooltip Layout
+    private VisualElement _tooltipRoot;
+    private Image _tooltipImage;
+    private TextElement _tooltipText;
+
+    public void UpdateScoreForActor(List<int> scores)
     {
-        ActorScore actor = _actorScores[actorIndex];
-        actor.ActorScoreValue = score;
-        actor.ActorTextElement.text = $": {actor.ActorScoreValue}";
+        for(int i = 0; i < scores.Count; ++i)
+        {
+            ActorScore actor = _actorScores[i];
+
+            actor.ShouldAnimate = actor.ActorScoreValue != scores[i];
+            actor.ActorScoreValue = scores[i];
+            actor.ActorTextElement.text = $": {actor.ActorScoreValue}";
+        }
+
         if (_scoreCoroutine == null)
         {
-            _scoreCoroutine = StartCoroutine(StartScoreBoxMove(actor));
+            _scoreCoroutine = StartCoroutine(StartScoreBoxMove());
         }
-        else
-        {
-            StopCoroutine(_scoreCoroutine);
-            _scoreCoroutine = null;
-        }
+
     }
 
     public void MarkButtonAsAvailable(int index)
@@ -117,11 +139,23 @@ public class GameplayUIControl : MonoBehaviour
     }
 
     #region Remote Control
+    private void HandleMouseDown(MouseDownEvent evt)
+    {
+        AudioManager.Instance.PlayAudioOneShot("RemoteButtonPress");
+    }
+
     private void HandleMouseEnter(MouseEnterEvent evt)
     {
         VisualElement target = evt.target as VisualElement;
         if (_validButtonsToIndex.TryGetValue(target.name, out int value))
         {
+            _tooltipRoot.style.left = evt.mousePosition.x - 520;
+            _tooltipRoot.style.top = evt.mousePosition.y + 20;
+            _tooltipRoot.style.display = DisplayStyle.Flex;
+
+            _tooltipText.text = _tooltipDescriptions[value];
+            _tooltipImage.sprite = _tooltipImages[value];
+
             if (!_gameplayButtons[value].IsAvailable)
             {
                 UnityEngine.Cursor.SetCursor(_uninteractableSprite, _offsetForMouseTexture, CursorMode.Auto);
@@ -140,6 +174,8 @@ public class GameplayUIControl : MonoBehaviour
         {
             UnityEngine.Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
+
+        _tooltipRoot.style.display = DisplayStyle.None;
     }
 
     private void HandleMouseUp(MouseUpEvent evt)
@@ -162,12 +198,47 @@ public class GameplayUIControl : MonoBehaviour
             {
                 PlayerActionManager.Instance.SelectAction(value);
             }
+            else
+            {
+                return;
+            }
         }
 
         for (int i = 0; i <_gameplayButtons.Count; ++i)
         {
             MarkButtonAsUnavailable(i);
         }
+    }
+
+    private void ClampTooltipToScreen()
+    {
+        Rect tooltipRect = _tooltipRoot.worldBound;
+        Rect screenRect = _tooltipRoot.panel.visualTree.worldBound;
+
+        Vector2 offset = Vector2.zero;
+
+        if (tooltipRect.xMax > screenRect.xMax)
+            offset.x = screenRect.xMax - tooltipRect.xMax;
+
+        if (tooltipRect.xMin < screenRect.xMin)
+            offset.x = screenRect.xMin - tooltipRect.xMin;
+
+        if (tooltipRect.yMax > screenRect.yMax)
+            offset.y = screenRect.yMax - tooltipRect.yMax;
+
+        if (tooltipRect.yMin < screenRect.yMin)
+            offset.y = screenRect.yMin - tooltipRect.yMin;
+
+        if (offset != Vector2.zero)
+        {
+            Vector2 current = _tooltipRoot.resolvedStyle.translate;
+            _tooltipRoot.style.translate = current + offset;
+        }
+    }
+
+    private void OnTooltipGeometryChanged(GeometryChangedEvent evt)
+    {
+        ClampTooltipToScreen();
     }
 
     private bool IsClickValid()
@@ -196,8 +267,11 @@ public class GameplayUIControl : MonoBehaviour
     private void InitializeButtonInfo(string buttonName)
     {
         Button action = m_rootUI.Q<Button>(buttonName);
+#if UNITY_EDITOR
         Assert.IsNotNull(action);
+#endif
         action.RegisterCallback<MouseUpEvent>(HandleMouseUp);
+        action.RegisterCallback<MouseDownEvent>(HandleMouseDown, TrickleDown.TrickleDown);
 
         int currentIndex = _gameplayButtons.Count;
         _gameplayButtons.Add(new GameplayButton(action, false, currentIndex));
@@ -207,9 +281,11 @@ public class GameplayUIControl : MonoBehaviour
     private void InitializePortraitInfo(string portraitName)
     {
         Image portrait = _turnContainer.Q<Image>(portraitName);
+#if UNITY_EDITOR
         Assert.IsNotNull(portrait);
-
+#endif
         int currentIndex = _turnPortraits.Count;
+        portrait.image = _portraitIcons[currentIndex];
         _turnPortraits.Add(new ActorPortrait(portrait, false, currentIndex));
         _validPortraitToIndex.Add(portraitName, currentIndex);
     }
@@ -217,13 +293,16 @@ public class GameplayUIControl : MonoBehaviour
     private void InitializeScoreInfo(string actorScoreName)
     {
         VisualElement scoreRoot = _scoreContainer.Q<VisualElement>(actorScoreName);
+#if UNITY_EDITOR
         Assert.IsNotNull(scoreRoot);
-
+#endif
         // Grab portrait and text element from the uxml child
         Image portrait = scoreRoot.Q<Image>("Portrait");
         TextElement score = scoreRoot.Q<TextElement>("Score");
         score.text = $":";
         int currentIndex = _actorScores.Count;
+        portrait.image = _portraitIcons[currentIndex];
+
         _actorScores.Add(new ActorScore(scoreRoot, portrait, score, 0, currentIndex));
         _validActorScoreToIndex.Add(actorScoreName, currentIndex);
     }
@@ -260,6 +339,11 @@ public class GameplayUIControl : MonoBehaviour
         InitializeButtonInfo("ActionTwo");
         InitializeButtonInfo("ActionThree");
         InitializeButtonInfo("ActionFour");
+
+        _tooltipRoot = m_rootUI.Q<VisualElement>("TooltipRoot");
+        _tooltipImage = _tooltipRoot.Q<Image>("TooltipImage");
+        _tooltipText = _tooltipRoot.Q<TextElement>("TooltipText");
+        _tooltipRoot.RegisterCallback<GeometryChangedEvent>(OnTooltipGeometryChanged, TrickleDown.TrickleDown);
     }
 
     private void OnEnable()
@@ -281,31 +365,43 @@ public class GameplayUIControl : MonoBehaviour
         _remoteRoot.UnregisterCallback<MouseEnterEvent>(HandleMouseEnter, TrickleDown.TrickleDown);
         _remoteRoot.UnregisterCallback<MouseLeaveEvent>(HandleMouseLeave, TrickleDown.TrickleDown);
 
+        _tooltipRoot.UnregisterCallback<GeometryChangedEvent>(OnTooltipGeometryChanged, TrickleDown.TrickleDown);
 
         foreach (var button in _gameplayButtons)
         {
             button.ActionButton.UnregisterCallback<MouseUpEvent>(HandleMouseUp);
+            button.ActionButton.UnregisterCallback<MouseDownEvent>(HandleMouseDown,TrickleDown.TrickleDown);
         }
     }
 
     #endregion
 
     #region Game Information
-    private IEnumerator StartScoreBoxMove(ActorScore scoreElement)
+    private IEnumerator StartScoreBoxMove()
     {
         _scoreContainer.AddToClassList("scorePanel--active");
         yield return new WaitForSecondsRealtime(0.5f);
 
-        // Inner score element movement
-        scoreElement.ScoreBoxRoot.AddToClassList("scorePanel--active");
-        yield return new WaitForSecondsRealtime(0.5f);
-        scoreElement.ScoreBoxRoot.RemoveFromClassList("scorePanel--active");
+        List<Coroutine> animations = new List<Coroutine>();
+        for (int i = 0; i < _actorScores.Count; ++i)
+        {
+            ActorScore scoreElement = _actorScores[i];
+            if (scoreElement.ShouldAnimate)
+            {
+                animations.Add(StartCoroutine(scoreElement.RunAnimation()));
+            }
+        }
+
+        foreach (Coroutine c in animations)
+        {
+            yield return c;
+        }
 
         // Outer score box movement
-        yield return new WaitForSecondsRealtime(3.0f);
+        yield return new WaitForSecondsRealtime(0.5f);
         _scoreContainer.RemoveFromClassList("scorePanel--active");
+        _scoreCoroutine = null;
     }
-
 
     private void OnRoundBannerComplete()
     {
