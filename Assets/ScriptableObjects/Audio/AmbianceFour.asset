@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1df053e00428dc945a3b4279f435a3d0, type: 3}
-  m_Name: TableTurnStart
+  m_Name: AmbianceFour
   m_EditorClassIdentifier: Assembly-CSharp::SoundInformation
-  Clip: {fileID: 8300000, guid: 29522de0cc9c34f419e6bb0d81a36f0a, type: 3}
-  SoundName: TableTurnStart
+  Clip: {fileID: 8300000, guid: 45733ef4af23d8a47a694ab4d0f680be, type: 3}
+  SoundName: AmbianceFour

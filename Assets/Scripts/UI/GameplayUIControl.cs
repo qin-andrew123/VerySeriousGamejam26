@@ -122,20 +122,12 @@ public class GameplayUIControl : MonoBehaviour
     {
         GameplayButton gameplayButton = _gameplayButtons[index];
         gameplayButton.IsAvailable = true;
-
-        Button button = gameplayButton.ActionButton;
-        button.RemoveFromClassList("remotebutton");
-        button.AddToClassList("remotebuttonActive");
     }
 
     public void MarkButtonAsUnavailable(int index)
     {
         GameplayButton gameplayButton = _gameplayButtons[index];
         gameplayButton.IsAvailable = false;
-
-        Button button = gameplayButton.ActionButton;
-        button.RemoveFromClassList("remotebuttonActive");
-        button.AddToClassList("remotebutton");
     }
 
     #region Remote Control

@@ -42,6 +42,18 @@ public class BoardManager : MonoBehaviour
     private List<BoardNode> _boardPoints = new List<BoardNode>();
     private bool _isPlayerConstraintSatisfied = false;
 
+    public void ClearAllItems()
+    {
+        foreach(GoalItem g in _currentlyAvailableItems)
+        {
+            Destroy(g.gameObject);
+        }
+
+        _numActiveItems = 0;
+        _currentlyAvailableItems.Clear();
+        _setCurrentlyActivePrefabs.Clear();
+    }
+
     public List<Vector3> GetItemCurrentPositions()
     {
         List<Vector3> result = new List<Vector3>();
@@ -91,9 +103,7 @@ public class BoardManager : MonoBehaviour
             GameObject go = Instantiate(possibleItems[randomItemIndex]);
             GoalItem prefabGoalItem = go.GetComponent<GoalItem>();
             prefabGoalItem.PrefabID = possibleItems[randomItemIndex];
-#if UNITY_EDITOR
-            Assert.IsNotNull(prefabGoalItem);
-#endif
+
             _currentlyAvailableItems.Add(prefabGoalItem);
             _setCurrentlyActivePrefabs.Add(possibleItems[randomItemIndex]);
 
@@ -273,17 +283,14 @@ public class BoardManager : MonoBehaviour
                     continue;
                 }
 
-                if (_currentlyAvailableItems[i].ParentNode == possibleIndicies[j])
+                if (_currentlyAvailableItems[i].ParentNode == null)
                 {
-                    possibleIndicies[j] = null;
                     continue;
                 }
 
-                float distSqr = Vector2.SqrMagnitude(item.gameObject.transform.position - possibleIndicies[j].SpawnPoint.position);
-                if (distSqr <= 2.5f)
+                if (_currentlyAvailableItems[i].ParentNode == possibleIndicies[j])
                 {
                     possibleIndicies[j] = null;
-                    continue;
                 }
             }
         }
@@ -345,7 +352,7 @@ public class BoardManager : MonoBehaviour
         }
 
         float randValue = Random.Range(0, totalWeight);
-        int randIndex = 0;
+        int randIndex = validStartingLocations.Count - 1; // fallback to last
         for (int i = 0; i < validStartingLocations.Count; ++i)
         {
             if (weights[i] > randValue)
@@ -529,8 +536,7 @@ public class BoardManager : MonoBehaviour
         AudioManager.Instance.StopPlayingRepeatingOneShot();
         transform.rotation = endRot;
 
-        AudioManager.Instance.PlayAudioOneShot("TableTurnEnd");
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.1f);
         m_isRotating = false;
         m_numRotations = 1;
 

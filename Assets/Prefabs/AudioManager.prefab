@@ -146,9 +146,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   _mainAudioSource: {fileID: 586482821247125601}
-  _mainVolumeInitial: 1
+  _mainVolumeInitial: 0.7
   _repeatingSFXSource: {fileID: 4581129199526512333}
-  _repeatingSFXVolumeInitial: 0.5
+  _repeatingSFXVolumeInitial: 1
   _oneShotSource: {fileID: 1074616430565772698}
   _oneshotVolumeInitial: 0.3
   _ambianceSource: {fileID: 4483758879880523992}

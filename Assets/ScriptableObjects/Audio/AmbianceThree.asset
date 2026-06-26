@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1df053e00428dc945a3b4279f435a3d0, type: 3}
-  m_Name: TableTurnEnd
+  m_Name: AmbianceThree
   m_EditorClassIdentifier: Assembly-CSharp::SoundInformation
-  Clip: {fileID: 8300000, guid: 95d30391a33244e4b975272b17a503e9, type: 3}
-  SoundName: TableTurnEnd
+  Clip: {fileID: 8300000, guid: 27f9b5d47f14b1947b79000cfbbd14f1, type: 3}
+  SoundName: AmbianceThree
