@@ -68,16 +68,16 @@ public class AudioManager : MonoBehaviour
         switch (moveType)
         {
             case MoveType.MOVE_TYPE_PLUS_ONE:
-                PlayAudioOneShot("PlusOneSFX", _oneshotVolumeInitial);
+                PlayAudioOneShot("PlusOneSFX");
                 break;
             case MoveType.MOVE_TYPE_SKIP:
-                PlayAudioOneShot("SkipSFX", _oneshotVolumeInitial);
+                PlayAudioOneShot("SkipSFX");
                 break;
             case MoveType.MOVE_TYPE_REVERSE:
-                PlayAudioOneShot("ReverseSFX", _oneshotVolumeInitial);
+                PlayAudioOneShot("ReverseSFX");
                 break;
             case MoveType.MOVE_TYPE_CHAOS:
-                PlayAudioOneShot("ChaosSFX", _oneshotVolumeInitial);
+                PlayAudioOneShot("ChaosSFX");
                 break;
         }
     }
@@ -159,10 +159,7 @@ public class AudioManager : MonoBehaviour
     }
 
     public void PlayAudioOneShot(string name, float scale = 1.0f)
-    {
-        _oneShotSource.volume = PlayerPrefs.GetFloat("Volume");
-        Debug.Log("Playing Audioclip at volume " + _oneShotSource.volume);
-
+    {   
         AudioClip clip = _loadedSounds.TryGetAudioClip(name);
         if (clip == null)
         {
