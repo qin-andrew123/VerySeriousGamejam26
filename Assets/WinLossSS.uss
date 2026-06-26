@@ -1,0 +1,16 @@
+:root {
+}
+
+.button {
+    background-color: rgb(255, 186, 204);
+    height: 100px;
+    width: 300px;
+    -unity-font-style: bold;
+    font-size: 30px;
+    transition-duration: 0.35s;
+}
+
+.button:hover {
+    background-color: rgb(231, 127, 154);
+    font-size: 35px;
+}

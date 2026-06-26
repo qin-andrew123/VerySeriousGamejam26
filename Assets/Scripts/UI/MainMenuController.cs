@@ -8,10 +8,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-/* TODO BRIEZ:
- * Progress bar while loading level
- */
-
 #region Leaderboard data
 [Serializable]
 public class LeaderboardEntry
@@ -67,7 +63,6 @@ public class MainMenuController : MonoBehaviour
         SubscribeButtons();
 
         // Set up leaderboard
-        CreateTestLeaderboardData();
         InitializeLeaderboard();
     }
 
@@ -94,34 +89,6 @@ public class MainMenuController : MonoBehaviour
             _settingsButton.clicked -= OnClickSettings;
         if (_exitButton != null)
             _exitButton.clicked -= OnExit;
-    }
-
-
-    // TODO BRIEZ: Test data for leaderboard! Remove later
-    private void CreateTestLeaderboardData()
-    {
-        // Fake data
-        LeaderboardEntry entry1 = new("Joe", 5);
-        LeaderboardEntry entry2 = new("Harriet", 25);
-        LeaderboardEntry entry3 = new("Leroy", 18);
-        LeaderboardEntry entry4 = new("Credence", 24);
-        LeaderboardEntry entry5 = new("Grenouille", 24);
-        LeaderboardEntry entry6 = new("Minerva", 1);
-        LeaderboardEntry entry7 = new("Wilhelm", -18);
-
-        LeaderboardData data = new();
-        data.Entries.Add(entry1);
-        data.Entries.Add(entry2);
-        data.Entries.Add(entry3);
-        data.Entries.Add(entry4);
-        data.Entries.Add(entry5);
-        data.Entries.Add(entry6);
-        data.Entries.Add(entry7);
-
-        string serializedData = JsonUtility.ToJson(data);
-
-        PlayerPrefs.SetString("Leaderboard", serializedData);
-        PlayerPrefs.Save();
     }
 
     private void InitializeLeaderboard()

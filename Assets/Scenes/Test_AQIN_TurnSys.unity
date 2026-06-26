@@ -521,7 +521,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
   m_PanelSettings: {fileID: 11400000, guid: 1521842f0074dbf47bf3bcb3b2de51eb, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 71d46e735611fa2499de87d91015a9ed, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: 42621fdde4bf84bb08f5cd3053ca22ba, type: 3}
   m_SortingOrder: 5
   m_Position: 0
   m_WorldSpaceSizeMode: 1
@@ -557,6 +557,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa34adf437986f347993a8a33afaee96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WinLossController
+  MainMenuName: MainMenu
 --- !u!1 &600354660
 GameObject:
   m_ObjectHideFlags: 0

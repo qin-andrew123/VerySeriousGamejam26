@@ -35,13 +35,6 @@ public class LifeUIController : MonoBehaviour
         _lifeImage2 = _uiDocument.rootVisualElement.Q("Life2") as Image;
         _lifeImage3 = _uiDocument.rootVisualElement.Q("Life3") as Image;
 
-        if (_lifeImage1 == null ||
-            _lifeImage2 == null ||
-            _lifeImage3 == null)
-        {
-            Debug.LogError("Failed to initialize life UI: at least one Image is null");
-        }
-
         // Acquire score text
         _scoreLabel = _uiDocument.rootVisualElement.Q("Score") as Label;
         if (_scoreLabel == null)

@@ -214,10 +214,14 @@ public class BoardManager : MonoBehaviour
                             _lifeUIController.SetLives(_currentLives);
 
                         // Check for death
-                        if (_currentLives < 0)
+                        if (_currentLives <= 0)
                         {
+                            Debug.Log("YOU LOOOOOooooooooooooooooooooooOOSE");
+
                             AudioManager.Instance.PlayAudioOneShot("GameOver");
-                            _winLossController.UpdateGameState("YOU LOSE");
+
+                            int score = (_actorScores.Count > 0) ? _actorScores.First() : -1;
+                            _winLossController.RaiseGameOverUI(score);
                             TurnManager.Instance.IsGameOver = true;
                         }
                     }

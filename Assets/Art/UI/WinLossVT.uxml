@@ -1,0 +1,19 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/WinLossSS.uss?fileID=7433441132597879392&amp;guid=22578817f42f84526902bd4515943319&amp;type=3#WinLossSS"/>
+    <ui:VisualElement name="GameOverOverlay" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.949);"/>
+    <ui:VisualElement name="WinLossRoot" style="flex-grow: 1; align-self: center; position: absolute;">
+        <ui:Label text="GAME OVER" name="Title" style="font-size: 125px; -unity-font-style: bold; color: rgb(255, 23, 23); padding-top: 25px; padding-bottom: 25px; -unity-text-align: upper-center;"/>
+        <ui:VisualElement name="LeaderboardRoot" style="flex-grow: 1; flex-direction: row; justify-content: center; margin-bottom: 25px;">
+            <ui:Label text="Enter name for leaderboard: " name="Prompt" style="color: rgb(255, 255, 255); align-self: center; font-size: 30px; margin-right: 40px;"/>
+            <ui:TextField placeholder-text="Your name here" max-length="20" readonly="false" name="Entry" style="font-size: 30px; width: 400px;"/>
+            <ui:Button text="Submit" name="Submit" style="margin-left: 10px; font-size: 30px;"/>
+        </ui:VisualElement>
+        <ui:Image name="Witch" source="project://database/Assets/Art/witchGameover.PNG?fileID=-7749364436662440515&amp;guid=77c18ba35aa2a4ce4adc5ce13c115d8c&amp;type=3#witchGameover_1" style="width: 600px; height: 600px; align-self: center;"/>
+        <ui:Image name="Want" source="project://database/Assets/Art/Treats/donut.png?fileID=21300000&amp;guid=0da5e67487c14c84a947795988f29be9&amp;type=3#donut" style="position: absolute; width: 100px; height: 100px; top: 331px; left: 457px;"/>
+        <ui:VisualElement name="ButtonBar" style="flex-grow: 1; flex-direction: row; justify-content: space-between; width: 1200px; padding-top: 25px;">
+            <ui:Button text="Play Again" name="PlayAgain" class="button"/>
+            <ui:Button text="Main Menu" name="MainMenu" class="button"/>
+            <ui:Button text="Quit" name="Quit" class="button"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
