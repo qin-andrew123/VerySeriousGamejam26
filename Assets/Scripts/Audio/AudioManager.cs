@@ -85,9 +85,6 @@ public class AudioManager : MonoBehaviour
     // For music and sound tracks
     public void PlayMainAudio(string name, bool looping = false)
     {
-        _mainAudioSource.volume = PlayerPrefs.GetFloat("Volume");
-        Debug.Log("Playing Audioclip at volume " +  _mainAudioSource.volume);
-
         AudioClip clip = _loadedSounds.TryGetAudioClip(name);
         if (clip == null)
         {
